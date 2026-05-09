@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bit-By-Bit | Official Tech Club</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;500;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root { 
+            --primary: #3b82f6; 
+            --bg: #0f172a; 
+            --text: #f8fafc; 
+            --accent: rgba(59, 130, 246, 0.4); 
+            --section-bg: rgba(30, 41, 59, 0.6); 
+            --card-border: rgba(255, 255, 255, 0.1);
+            --bridge-bg: #1e293b;
+        }
+
+        [data-theme='light'] { 
+            --bg: #f8fafc; 
+            --text: #0f172a; 
+            --primary: #2563eb; 
+            --accent: rgba(37, 99, 235, 0.25); 
+            --section-bg: #e2e8f0; 
+            --card-border: rgba(37, 99, 235, 0.15);
+            --bridge-bg: #2563eb;
+        }
+
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: var(--bg); color: var(--text); 
+            transition: background-color 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-x: hidden; cursor: none;
+        }
+
+        #loader {
+            position: fixed; inset: 0; background: #0f172a; z-index: 1000;
+            display: flex; align-items: center; justify-content: center;
+            transition: opacity 0.8s ease;
+        }
+
+        #cursor { width: 10px; height: 10px; background: var(--primary); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; }
+        #cursor-ring { width: 40px; height: 40px; border: 2px solid var(--primary); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9998; transition: transform 0.1s; }
+
+        .content-wrap { padding-top: 100px; }
+
+        .grid-pattern {
+            background-image: radial-gradient(var(--accent) 1.5px, transparent 1px);
+            background-size: 45px 45px;
+            position: fixed; inset: 0; z-index: -1; opacity: 0.6;
+            animation: pan 50s linear infinite;
+        }
+        @keyframes pan { from { background-position: 0 0; } to { background-position: 1000px 1000px; } }
+        
+        .orb { position: fixed; width: 600px; height: 600px; background: var(--primary); filter: blur(160px); border-radius: 50%; opacity: 0.15; z-index: -1; animation: float 25s infinite alternate ease-in-out; }
+        @keyframes float { 
+            0% { transform: translate(-20%, -20%) scale(1); } 
+            100% { transform: translate(40%, 30%) scale(1.1); } 
+        }
+
+        .bar { transition: height 0.3s ease; transform-origin: bottom; }
+        .logo-box:hover .bar-1 { height: 20px; }
+        .logo-box:hover .bar-2 { height: 8px; }
+        .logo-box:hover .bar-3 { height: 14px; }
+
+        .theme-toggle-box {
+            width: 48px; height: 48px; border-radius: 12px;
+            border: 1.5px solid var(--card-border);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: 0.3s; background: rgba(255,255,255,0.05);
+        }
+        [data-theme='light'] .theme-toggle-box { background: #ffffff; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); border-color: transparent; }
+        .theme-toggle-box:hover { border-color: var(--primary); transform: scale(1.05); }
+
+        .nav-link { position: relative; font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 0.1em; }
+        .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -5px; left: 0; background: var(--primary); transition: width 0.3s; }
+        .nav-link:hover::after { width: 100%; }
+
+        .btn-grad { background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); color: white; }
+
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(14px); border: 1px solid var(--card-border); transition: all 0.4s ease; }
+        [data-theme='light'] .glass { background: rgba(255, 255, 255, 0.9); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05); }
+
+        .reveal { animation: revealUp 0.8s ease forwards; opacity: 0; }
+        @keyframes revealUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Brightened Connect Section */
+        .social-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: rgba(var(--primary), 0.05);
+        }
+        .social-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            background: var(--primary);
+            color: white !important;
+            box-shadow: 0 20px 40px rgba(59, 130, 246, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div id="loader">
+        <div class="flex items-end gap-1.5 h-10">
+            <div class="w-2 bg-blue-400 h-1/2 animate-bounce"></div>
+            <div class="w-2 bg-blue-600 h-full animate-bounce" style="animation-delay: 0.1s"></div>
+            <div class="w-2 bg-blue-800 h-3/4 animate-bounce" style="animation-delay: 0.2s"></div>
+        </div>
+    </div>
+
+    <div id="cursor"></div>
+    <div id="cursor-ring"></div>
+    <div class="grid-pattern"></div>
+    <div class="orb"></div>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const App = () => {
+            const [theme, setTheme] = useState('dark');
+            const [teams, setTeams] = useState({});
+            const [activeTeam, setActiveTeam] = useState(null);
+
+            useEffect(() => {
+                document.documentElement.setAttribute('data-theme', theme);
+                const cursor = document.getElementById('cursor');
+                const ring = document.getElementById('cursor-ring');
+                const onMouseMove = (e) => {
+                    cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px';
+                    ring.style.left = (e.clientX - 20) + 'px'; ring.style.top = (e.clientY - 20) + 'px';
+                };
+                window.addEventListener('mousemove', onMouseMove);
+                setTimeout(() => {
+                    const loader = document.getElementById('loader');
+                    loader.style.opacity = '0';
+                    setTimeout(() => loader.style.display = 'none', 800);
+                }, 1200);
+                fetch('/api/teams').then(r => r.json()).then(data => {
+                    setTeams(data);
+                    setActiveTeam(Object.keys(data)[0]);
+                });
+                return () => window.removeEventListener('mousemove', onMouseMove);
+            }, [theme]);
+
+            return (
+                <div className="relative">
+                    <nav className="fixed top-0 w-full z-50 px-10 py-6 flex justify-between items-center backdrop-blur-md border-b border-white/5">
+                        <div className="flex items-center gap-3 logo-box cursor-pointer group">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <rect className="bar bar-1" x="3" y="13" width="4" height="8" rx="1" fill="#60a5fa" />
+                                <rect className="bar bar-2" x="10" y="7" width="4" height="14" rx="1" fill="#3b82f6" />
+                                <rect className="bar bar-3" x="17" y="3" width="4" height="18" rx="1" fill="#1e40af" />
+                            </svg>
+                            <span className="text-xl font-extrabold tracking-tighter">BIT-BY-BIT</span>
+                        </div>
+
+                        <div className="hidden md:flex gap-12">
+                            {['home', 'leads', 'teams', 'glimpses', 'connect'].map(item => (
+                                <a key={item} href={`#${item}`} className="nav-link">{item}</a>
+                            ))}
+                        </div>
+
+                        <div onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className="theme-toggle-box">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                                <circle cx="12" cy="12" r="4" fill={theme === 'dark' ? 'white' : 'black'} />
+                                <circle cx="12" cy="4" r="1" fill="currentColor" />
+                                <circle cx="12" cy="20" r="1" fill="currentColor" />
+                                <circle cx="4" cy="12" r="1" fill="currentColor" />
+                                <circle cx="20" cy="12" r="1" fill="currentColor" />
+                                <circle cx="6.34" cy="6.34" r="1" fill="currentColor" />
+                                <circle cx="17.66" cy="17.66" r="1" fill="currentColor" />
+                                <circle cx="6.34" cy="17.66" r="1" fill="currentColor" />
+                                <circle cx="17.66" cy="6.34" r="1" fill="currentColor" />
+                            </svg>
+                        </div>
+                    </nav>
+
+                    <div className="content-wrap">
+                        <header id="home" className="min-h-[80vh] flex flex-col justify-center items-center px-8 text-center relative reveal">
+                            <h1 className="text-7xl md:text-[9rem] font-black tracking-tighter leading-none mb-8 uppercase">BIT-BY-BIT</h1>
+                            <p className="text-xl md:text-2xl opacity-60 max-w-3xl mx-auto leading-relaxed mb-12">Building high-performance tech systems from the ground up.</p>
+                            <a href="#teams" className="btn-grad px-12 py-4 rounded-full font-bold shadow-2xl shadow-blue-500/20 hover:scale-105 transition uppercase tracking-widest">Explore Systems</a>
+                        </header>
+
+                        <section id="leads" className="py-32 px-8 bg-[var(--section-bg)] shadow-inner reveal">
+                            <div className="max-w-6xl mx-auto">
+                                <h2 className="text-4xl font-extrabold text-center mb-20 tracking-tight">The Leads</h2>
+                                <div className="grid md:grid-cols-3 gap-12">
+                                    <LeadCard name="Atherva Sahai" role="President" seed="Jiya" />
+                                    <LeadCard name="Chavi Agarwal" role="Vice President" seed="Atherva" />
+                                    <LeadCard name="Jiya Arora" role="Gen Secretary" seed="Atherva" />
+                                </div>
+                            </div>
+                        </section>
+
+                        <section id="teams" className="py-32 px-8 reveal">
+                            <div className="max-w-6xl mx-auto">
+                                <h2 className="text-4xl font-extrabold text-center mb-16 tracking-tight">Operational Domains</h2>
+                                <div className="flex flex-wrap justify-center gap-3 mb-20">
+                                    {Object.keys(teams).map(t => (
+                                        <button key={t} onClick={() => setActiveTeam(t)} className={`px-6 py-2 rounded-xl font-bold transition-all border ${activeTeam === t ? 'bg-blue-600 text-white border-blue-600 shadow-lg' : 'glass opacity-60 hover:opacity-100'}`}>
+                                            {t}
+                                        </button>
+                                    ))}
+                                </div>
+                                {activeTeam && (
+                                    <div className="glass p-12 rounded-[3rem] grid md:grid-cols-2 gap-16 shadow-2xl border-white/10">
+                                        <div className="space-y-8">
+                                            <div className="p-8 rounded-3xl bg-blue-600/10 border border-blue-600/20 shadow-sm">
+                                                <p className="text-[10px] font-bold uppercase text-blue-500 tracking-widest mb-2">Team Lead</p>
+                                                <h4 className="text-4xl font-extrabold">{teams[activeTeam].lead}</h4>
+                                            </div>
+                                            <div className="p-8 rounded-3xl bg-blue-600/10 border border-blue-600/20 shadow-sm">
+                                                <p className="text-[10px] font-bold uppercase text-blue-500 tracking-widest mb-2">Co-Lead</p>
+                                                <h4 className="text-4xl font-extrabold">{teams[activeTeam].co_lead}</h4>
+                                            </div>
+                                        </div>
+                                        <div className="bg-white/5 p-10 rounded-[2.5rem] border border-white/5 shadow-sm">
+                                            <h5 className="font-bold text-xs opacity-40 uppercase mb-8 tracking-[0.2em]">Core Members</h5>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8">
+                                                {teams[activeTeam].core.map(m => (
+                                                    <div key={m} className="flex items-center gap-3 font-medium opacity-80"><div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>{m}</div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </section>
+
+                        <section id="glimpses" className="py-32 px-8 max-w-7xl mx-auto reveal">
+                            <h2 className="text-5xl font-black tracking-tight mb-16">Success Glimpses.</h2>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                {[1,2,3,4,5,6].map(i => (
+                                    <div key={i} className={`rounded-3xl overflow-hidden shadow-lg group relative ${i === 1 ? 'md:col-span-2' : ''}`}>
+                                        <img src={`https://picsum.photos/seed/${i+250}/800/600`} className="w-full h-full object-cover transition duration-700 hover:scale-110" />
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+
+                        <section className="py-24 px-8 bg-[var(--bridge-bg)] text-white text-center shadow-2xl relative overflow-hidden">
+                             <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
+                             <div className="max-w-4xl mx-auto relative z-10">
+                                <h3 className="text-3xl font-black mb-4 uppercase tracking-[0.3em]">Scale Your Potential</h3>
+                                <p className="opacity-70 text-lg font-medium">Join a network where every byte of code matters and every idea grows bit by bit.</p>
+                             </div>
+                        </section>
+
+                        {/* BRIGHTENED CONNECT SECTION */}
+                        <footer id="connect" className="py-40 px-8 text-center bg-[var(--bg)] relative">
+                            <div className="max-w-5xl mx-auto">
+                                <div className="grid md:grid-cols-2 gap-8 mb-24">
+                                    <a href="#" className="social-card p-12 rounded-[2.5rem] border border-current/10 flex flex-col items-center gap-4">
+                                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                                        <span className="text-2xl font-extrabold tracking-widest">INSTAGRAM</span>
+                                    </a>
+                                    <a href="#" className="social-card p-12 rounded-[2.5rem] border border-current/10 flex flex-col items-center gap-4">
+                                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+                                        <span className="text-2xl font-extrabold tracking-widest">LINKEDIN</span>
+                                    </a>
+                                </div>
+                                
+                                <div className="flex flex-col items-center gap-6 opacity-40">
+                                    <div className="flex items-center gap-2 logo-box opacity-50">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                            <rect className="bar bar-1" x="3" y="13" width="4" height="8" rx="1" fill="currentColor" />
+                                            <rect className="bar bar-2" x="10" y="7" width="4" height="14" rx="1" fill="currentColor" />
+                                            <rect className="bar bar-3" x="17" y="3" width="4" height="18" rx="1" fill="currentColor" />
+                                        </svg>
+                                        <span className="font-bold tracking-tighter">BIT-BY-BIT</span>
+                                    </div>
+                                    <div className="font-bold uppercase tracking-[0.8em] text-[10px]">© BIT-BY-BIT CLUB</div>
+                                </div>
+                            </div>
+                        </footer>
+                    </div>
+                </div>
+            );
+        };
+
+        const LeadCard = ({ name, role, seed }) => (
+            <div className="glass p-10 rounded-[3.5rem] flex flex-col items-center group transition-all duration-700 hover:-translate-y-4 shadow-xl hover:bg-blue-600 hover:text-white border-white/10">
+                <div className="w-44 h-44 mb-8 bg-white/5 rounded-full overflow-hidden p-2 group-hover:scale-105 transition-all border-4 border-blue-500/20 group-hover:border-white">
+                    <img src={`https://api.dicebear.com/7.x/notionists/svg?seed=${seed}&flip=true`} className="w-full h-full object-contain" />
+                </div>
+                <h3 className="text-3xl font-black mb-1 leading-tight">{name}</h3>
+                <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-blue-500 group-hover:text-white">{role}</p>
+            </div>
+        );
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
