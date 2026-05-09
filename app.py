@@ -3,15 +3,15 @@ from flask import Flask, render_template, jsonify
 app = Flask(__name__)
 
 TEAMS_DATA = {
-    "PR and Outreach": {
-        "lead": "Manav G.",
-        "co_lead": "Sia K.",
-        "core": ["Yash R.", "Tanya V.", "Omer S."]
-    }
     "Technical": {
         "lead": "Aryan Verma",
         "co_lead": "Sanya Malhotra",
         "core": ["Ishaan Singh", "Meera Rao", "Kabir Khan", "Ananya D."]
+    },
+    "PR and Outreach": {
+        "lead": "Manav G.",
+        "co_lead": "Sia K.",
+        "core": ["Yash R.", "Tanya V.", "Omer S."]
     },
     "Design": {
         "lead": "Riya Kapoor",
