@@ -30,21 +30,15 @@
             overflow-x: hidden; cursor: none;
         }
 
-        /* TYPING LOADER FIX
-        /* TYPING LOADER ANIMATION */
+        /* TERMINAL TYPING LOADER */
         #loader {
             position: fixed; inset: 0; background: #020617; z-index: 1000;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             transition: opacity 0.8s ease;
         }
         .typing-container {
-            font-family: 'Courier New', monospace;
-            color: #3b82f6;
-            font-size: 14px;
-            letter-spacing: 2px;
-            width: 0;
-            white-space: nowrap;
-            overflow: hidden;
+            font-family: 'Courier New', monospace; color: #3b82f6; font-size: 14px;
+            letter-spacing: 2px; width: 0; white-space: nowrap; overflow: hidden;
             border-right: 3px solid #3b82f6;
             animation: typing 2.5s steps(30, end) forwards, blink .5s step-end infinite;
         }
@@ -62,7 +56,7 @@
             background-image: radial-gradient(var(--accent) 1.5px, transparent 1px);
             background-size: 45px 45px;
             position: fixed; inset: 0; z-index: -1; opacity: 0.6;
-            animation: pan 40s linear infinite; /* Slowed down significantly */
+            animation: pan 120s linear infinite;
         }
         @keyframes pan { from { background-position: 0 0; } to { background-position: 1000px 1000px; } }
         
@@ -75,7 +69,7 @@
         .logo-box:hover .bar-2 { height: 8px; }
         .logo-box:hover .bar-3 { height: 14px; }
 
-        /* THEME TOGGLE DOODLE (MATCHING IMAGE) */
+        /* THEME TOGGLE DOODLE */
         .theme-toggle-box {
             width: 48px; height: 48px; border-radius: 12px;
             border: 1.5px solid rgba(255,255,255,0.1);
@@ -143,7 +137,6 @@
                 };
                 window.addEventListener('mousemove', onMouseMove);
                 
-                // Realistic typing timeout for loader
                 setTimeout(() => {
                     const loader = document.getElementById('loader');
                     loader.style.opacity = '0';
@@ -201,7 +194,6 @@
                             <div className="max-w-6xl mx-auto">
                                 <h2 className="text-4xl font-extrabold text-center mb-20 tracking-tight">The Core Leadership</h2>
                                 <div className="grid md:grid-cols-3 gap-12">
-                                    {/* PHOTO SWAP: ATHERVA GETS JIYA'S SEED, GIRLS GET ATHERVA'S SEED */}
                                     <LeadCard name="Atherva Sahai" role="President" seed="Jiya" />
                                     <LeadCard name="Chavi Agarwal" role="Vice President" seed="Atherva" />
                                     <LeadCard name="Jiya Arora" role="Gen Secretary" seed="Atherva" />
@@ -257,7 +249,6 @@
                             </div>
                         </section>
 
-                        {/* IMPACT BRIDGE SEPARATOR */}
                         <section className="py-24 px-8 bg-[var(--bridge-bg)] text-white text-center shadow-2xl relative overflow-hidden">
                              <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
                              <div className="max-w-4xl mx-auto relative z-10">
@@ -307,4 +298,4 @@
         root.render(<App />);
     </script>
 </body>
-</html>120
+</html>
