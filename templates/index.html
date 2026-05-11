@@ -482,6 +482,7 @@
                         </section>
 
                         <footer id="connect" className="py-32 px-10 bg-[var(--bg)] relative overflow-hidden">
+                            <canvas id="connect-canvas" className="absolute inset-0 w-full h-full pointer-events-none"></canvas>
 
                             <div className="max-w-5xl mx-auto relative z-10">
                                 {/* heading */}
@@ -576,7 +577,7 @@
         root.render(<App />);
     </script>
     <script>
-    // ── ANIMATED BACKGROUND ──────────────────────────────────────────
+    // ── MAIN PAGE BACKGROUND ─────────────────────────────────────────
     (function() {
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
@@ -605,25 +606,21 @@
         window.addEventListener('resize', resize);
         window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
 
-        let t = 0;
         function draw() {
-            t += 0.008;
             const dark = isDark();
             const bg   = dark ? '#0f172a' : '#f8fafc';
             const dot  = dark ? 'rgba(59,130,246,' : 'rgba(37,99,235,';
             const line = dark ? 'rgba(59,130,246,' : 'rgba(37,99,235,';
-            const CONN = 140;   // max connection distance
-            const MOUSE= 220;   // mouse influence radius
+            const CONN = 140;
+            const MOUSE= 220;
 
             ctx.fillStyle = bg;
             ctx.fillRect(0, 0, W, H);
 
-            // update + draw nodes
             for (let i = 0; i < nodes.length; i++) {
                 const n = nodes[i];
                 n.pulse += 0.018;
 
-                // subtle mouse repulsion
                 const dx = n.x - mouse.x, dy = n.y - mouse.y;
                 const dist = Math.sqrt(dx*dx + dy*dy);
                 if (dist < MOUSE) {
@@ -632,15 +629,12 @@
                     n.vy += (dy / dist) * force;
                 }
 
-                // gentle velocity damp
                 n.vx *= 0.982; n.vy *= 0.982;
                 n.x += n.vx;   n.y += n.vy;
 
-                // wrap edges
                 if (n.x < 0) n.x = W; if (n.x > W) n.x = 0;
                 if (n.y < 0) n.y = H; if (n.y > H) n.y = 0;
 
-                // pulsing glow dot
                 const glow = 0.5 + 0.5 * Math.sin(n.pulse);
                 const alpha = dark ? (0.25 + 0.35 * glow) : (0.2 + 0.25 * glow);
                 ctx.beginPath();
@@ -648,15 +642,12 @@
                 ctx.fillStyle = dot + alpha + ')';
                 ctx.fill();
 
-                // draw connections
                 for (let j = i + 1; j < nodes.length; j++) {
                     const m = nodes[j];
                     const ex = n.x - m.x, ey = n.y - m.y;
                     const d  = Math.sqrt(ex*ex + ey*ey);
                     if (d < CONN) {
-                        const a = dark
-                            ? (1 - d / CONN) * 0.18
-                            : (1 - d / CONN) * 0.12;
+                        const a = dark ? (1 - d / CONN) * 0.18 : (1 - d / CONN) * 0.12;
                         ctx.beginPath();
                         ctx.moveTo(n.x, n.y);
                         ctx.lineTo(m.x, m.y);
@@ -666,13 +657,90 @@
                     }
                 }
             }
-
             requestAnimationFrame(draw);
         }
 
         resize();
         draw();
     })();
+
+    // ── CONNECT SECTION BACKGROUND ───────────────────────────────────
+
+        // wait for React to mount then init
+        const initConnect = () => {
+            const canvas = document.getElementById('connect-canvas');
+            if (!canvas) { setTimeout(initConnect, 300); return; }
+            const ctx = canvas.getContext('2d');
+            let W, H, nodes;
+
+            const isDark = () => document.documentElement.getAttribute('data-theme') !== 'light';
+
+            function resize() {
+                const rect = canvas.parentElement.getBoundingClientRect();
+                W = canvas.width  = rect.width;
+                H = canvas.height = rect.height;
+                buildNodes();
+            }
+
+            function buildNodes() {
+                const count = Math.floor((W * H) / 12000);
+                nodes = Array.from({ length: count }, () => ({
+                    x: Math.random() * W,
+                    y: Math.random() * H,
+                    vx: (Math.random() - 0.5) * 0.3,
+                    vy: (Math.random() - 0.5) * 0.3,
+                    r: Math.random() * 1.6 + 0.5,
+                    pulse: Math.random() * Math.PI * 2,
+                }));
+            }
+
+            window.addEventListener('resize', resize);
+
+            function draw() {
+                const dark = isDark();
+                const dot  = dark ? 'rgba(59,130,246,' : 'rgba(37,99,235,';
+                const line = dark ? 'rgba(59,130,246,' : 'rgba(37,99,235,';
+                const CONN = 130;
+
+                ctx.clearRect(0, 0, W, H);
+
+                for (let i = 0; i < nodes.length; i++) {
+                    const n = nodes[i];
+                    n.pulse += 0.018;
+                    n.vx *= 0.995; n.vy *= 0.995;
+                    n.x += n.vx;   n.y += n.vy;
+                    if (n.x < 0) n.x = W; if (n.x > W) n.x = 0;
+                    if (n.y < 0) n.y = H; if (n.y > H) n.y = 0;
+
+                    const glow  = 0.5 + 0.5 * Math.sin(n.pulse);
+                    const alpha = dark ? (0.25 + 0.35 * glow) : (0.2 + 0.25 * glow);
+                    ctx.beginPath();
+                    ctx.arc(n.x, n.y, n.r * (1 + 0.3 * glow), 0, Math.PI * 2);
+                    ctx.fillStyle = dot + alpha + ')';
+                    ctx.fill();
+
+                    for (let j = i + 1; j < nodes.length; j++) {
+                        const m = nodes[j];
+                        const ex = n.x - m.x, ey = n.y - m.y;
+                        const d  = Math.sqrt(ex*ex + ey*ey);
+                        if (d < CONN) {
+                            const a = dark ? (1 - d / CONN) * 0.18 : (1 - d / CONN) * 0.12;
+                            ctx.beginPath();
+                            ctx.moveTo(n.x, n.y);
+                            ctx.lineTo(m.x, m.y);
+                            ctx.strokeStyle = line + a + ')';
+                            ctx.lineWidth = 0.7;
+                            ctx.stroke();
+                        }
+                    }
+                }
+                requestAnimationFrame(draw);
+            }
+
+            resize();
+            draw();
+        };
+        setTimeout(initConnect, 1000);
     </script>
 </body>
-</html>120
+</html>
