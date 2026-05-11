@@ -8,7 +8,7 @@
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;500;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;500;800&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
     
     <style>
         :root { 
@@ -51,23 +51,56 @@
         @keyframes typing { from { width: 0 } to { width: 280px } }
         @keyframes blink { from, to { border-color: transparent } 50% { border-color: #3b82f6 } }
 
-        /* CURSOR */
+        /* HEADING FONT */
+        .font-display { font-family: 'Orbitron', sans-serif; }
+
+        /* CURSOR — hidden on touch devices */
         #cursor { width: 10px; height: 10px; background: var(--primary); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; }
         #cursor-ring { width: 40px; height: 40px; border: 2px solid var(--primary); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9998; transition: transform 0.1s; }
+        @media (hover: none) and (pointer: coarse) {
+            #cursor, #cursor-ring { display: none !important; }
+            body { cursor: auto; }
+        }
+
+        /* JELLY TOGGLE */
+        .theme-toggle-box {
+            position: relative;
+            overflow: visible;
+        }
+        .theme-toggle-box::before {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 14px;
+            background: var(--primary);
+            opacity: 0;
+            transform: scale(0.85);
+            transition: opacity 0.3s, transform 0.3s;
+            z-index: -1;
+        }
+        .theme-toggle-box:active {
+            animation: jellyPop 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+        }
+        .theme-toggle-box:hover::before {
+            opacity: 0.15;
+            transform: scale(1);
+        }
+        @keyframes jellyPop {
+            0%   { transform: scale(1); }
+            20%  { transform: scale(0.82, 1.18); }
+            40%  { transform: scale(1.14, 0.88); }
+            60%  { transform: scale(0.94, 1.07); }
+            80%  { transform: scale(1.04, 0.96); }
+            100% { transform: scale(1); }
+        }
 
         .content-wrap { padding-top: 100px; }
 
-        /* SLOW MOVING BACKGROUND */
-        .grid-pattern {
-            background-image: radial-gradient(var(--accent) 1.5px, transparent 1px);
-            background-size: 45px 45px;
-            position: fixed; inset: 0; z-index: -1; opacity: 0.6;
-            animation: pan 40s linear infinite; /* Slowed down significantly */
+        /* BACKGROUND CANVAS */
+        #bg-canvas {
+            position: fixed; inset: 0; z-index: -1;
+            width: 100%; height: 100%;
         }
-        @keyframes pan { from { background-position: 0 0; } to { background-position: 1000px 1000px; } }
-        
-        .orb { position: fixed; width: 600px; height: 600px; background: var(--primary); filter: blur(160px); border-radius: 50%; opacity: 0.15; z-index: -1; animation: float 25s infinite alternate ease-in-out; }
-        @keyframes float { 0% { transform: translate(-20%, -20%) scale(1); } 100% { transform: translate(40%, 30%) scale(1.1); } }
 
         /* LOGO BARS */
         .bar { transition: height 0.3s ease; transform-origin: bottom; }
@@ -83,6 +116,7 @@
             cursor: pointer; transition: 0.3s; background: rgba(255,255,255,0.05);
         }
         [data-theme='light'] .theme-toggle-box { border-color: rgba(0,0,0,0.1); background: #ffffff; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+
 
         .nav-link { position: relative; font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 0.1em; }
         .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -5px; left: 0; background: var(--primary); transition: width 0.3s; }
@@ -101,12 +135,143 @@
             background: linear-gradient(145deg, rgba(59, 130, 246, 0.15), rgba(30, 64, 175, 0.05));
             border: 1px solid rgba(59, 130, 246, 0.3);
             transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .social-card::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: inherit;
+            background: transparent;
+            border: 2px solid transparent;
+            transition: border-color 0.4s ease, box-shadow 0.4s ease;
+        }
+        .social-card:hover::after {
+            border-color: rgba(59, 130, 246, 0.7);
+            box-shadow: 0 0 24px rgba(59, 130, 246, 0.35), inset 0 0 24px rgba(59, 130, 246, 0.05);
         }
         .social-card:hover { 
             background: var(--primary); color: white !important; 
             box-shadow: 0 20px 40px rgba(59, 130, 246, 0.4);
             transform: translateY(-10px);
         }
+
+        @keyframes scanMove {
+            from { background-position: 0 0; }
+            to   { background-position: 0 100px; }
+        }
+        @keyframes textPulse {
+            0%, 100% { filter: drop-shadow(0 0 20px rgba(59,130,246,0.6)); opacity: 1; }
+            50%      { filter: drop-shadow(0 0 40px rgba(59,130,246,1)); opacity: 0.85; }
+        }
+
+        /* NAV SCAN LINE */
+        nav::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 100%; height: 1px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            opacity: 0.6;
+        }
+
+        /* SECTION HEADING ACCENT */
+        .section-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--primary);
+            margin-bottom: 12px;
+        }
+        .section-label::before { content: '['; opacity: 0.5; }
+        .section-label::after  { content: ']'; opacity: 0.5; }
+
+        /* HERO GLITCH - CONTINUOUS THUNDER */
+        .glitch {
+            position: relative;
+        }
+        .glitch::before, .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+        }
+        .glitch::before {
+            color: #60a5fa;
+            animation: thunder1 2.4s infinite;
+            clip-path: polygon(0 0, 100% 0, 100% 38%, 0 38%);
+        }
+        .glitch::after {
+            color: #1d4ed8;
+            animation: thunder2 2.4s infinite;
+            clip-path: polygon(0 62%, 100% 62%, 100% 100%, 0 100%);
+        }
+        @keyframes thunder1 {
+            0%              { transform: translate(0);         opacity: 0; }
+            5%              { transform: translate(-4px, 2px); opacity: 0.9; }
+            6%              { transform: translate(4px, -1px); opacity: 0.9; }
+            7%              { transform: translate(-2px, 1px); opacity: 0.8; }
+            8%              { transform: translate(0);         opacity: 0; }
+            40%             { transform: translate(0);         opacity: 0; }
+            40.5%           { transform: translate(-6px, 2px); opacity: 1; }
+            41%             { transform: translate(3px, -2px); opacity: 1; }
+            41.5%           { transform: translate(-1px, 1px); opacity: 0.7; }
+            42%             { transform: translate(0);         opacity: 0; }
+            70%             { transform: translate(0);         opacity: 0; }
+            70.3%           { transform: translate(5px, -1px); opacity: 0.9; }
+            70.6%           { transform: translate(-3px, 2px); opacity: 0.9; }
+            70.9%           { transform: translate(0);         opacity: 0; }
+            100%            { transform: translate(0);         opacity: 0; }
+        }
+        @keyframes thunder2 {
+            0%              { transform: translate(0);         opacity: 0; }
+            5%              { transform: translate(4px, -2px); opacity: 0.9; }
+            6%              { transform: translate(-4px, 1px); opacity: 0.9; }
+            7%              { transform: translate(2px, -1px); opacity: 0.8; }
+            8%              { transform: translate(0);         opacity: 0; }
+            40%             { transform: translate(0);         opacity: 0; }
+            40.5%           { transform: translate(6px, -2px); opacity: 1; }
+            41%             { transform: translate(-3px, 2px); opacity: 1; }
+            41.5%           { transform: translate(1px, -1px); opacity: 0.7; }
+            42%             { transform: translate(0);         opacity: 0; }
+            70%             { transform: translate(0);         opacity: 0; }
+            70.3%           { transform: translate(-5px, 1px); opacity: 0.9; }
+            70.6%           { transform: translate(3px, -2px); opacity: 0.9; }
+            70.9%           { transform: translate(0);         opacity: 0; }
+            100%            { transform: translate(0);         opacity: 0; }
+        }
+
+        /* CARD CORNER BRACKETS */
+        .corner-card {
+            position: relative;
+        }
+        .corner-card::before, .corner-card::after {
+            content: '';
+            position: absolute;
+            width: 14px; height: 14px;
+            border-color: var(--primary);
+            border-style: solid;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .corner-card::before {
+            top: 10px; left: 10px;
+            border-width: 2px 0 0 2px;
+            border-radius: 2px 0 0 0;
+        }
+        .corner-card::after {
+            bottom: 10px; right: 10px;
+            border-width: 0 2px 2px 0;
+            border-radius: 0 0 2px 0;
+        }
+        .corner-card:hover::before, .corner-card:hover::after { opacity: 1; }
     </style>
 </head>
 <body>
@@ -116,13 +281,12 @@
             <div class="w-2 bg-blue-600 h-full"></div>
             <div class="w-2 bg-blue-700 h-3/4"></div>
         </div>
-        <div class="typing-container">INITIALIZING BIT-BY-BIT...</div>
+        <div class="typing-container">&gt; LOADING BIT-BY-BIT...</div>
     </div>
 
     <div id="cursor"></div>
     <div id="cursor-ring"></div>
-    <div class="grid-pattern"></div>
-    <div class="orb"></div>
+    <canvas id="bg-canvas"></canvas>
     <div id="root"></div>
 
     <script type="text/babel">
@@ -137,11 +301,15 @@
                 document.documentElement.setAttribute('data-theme', theme);
                 const cursor = document.getElementById('cursor');
                 const ring = document.getElementById('cursor-ring');
-                const onMouseMove = (e) => {
-                    cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px';
-                    ring.style.left = (e.clientX - 20) + 'px'; ring.style.top = (e.clientY - 20) + 'px';
-                };
-                window.addEventListener('mousemove', onMouseMove);
+                const isTouchDevice = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+                let onMouseMove;
+                if (!isTouchDevice) {
+                    onMouseMove = (e) => {
+                        cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px';
+                        ring.style.left = (e.clientX - 20) + 'px'; ring.style.top = (e.clientY - 20) + 'px';
+                    };
+                    window.addEventListener('mousemove', onMouseMove);
+                }
                 
                 // Realistic typing timeout for loader
                 setTimeout(() => {
@@ -154,19 +322,19 @@
                     setTeams(data);
                     setActiveTeam(Object.keys(data)[0]);
                 });
-                return () => window.removeEventListener('mousemove', onMouseMove);
+                return () => { if (onMouseMove) window.removeEventListener('mousemove', onMouseMove); };
             }, [theme]);
 
             return (
                 <div className="relative">
-                    <nav className="fixed top-0 w-full z-50 px-10 py-6 flex justify-between items-center backdrop-blur-md border-b border-white/5">
+                    <nav className="relative fixed top-0 w-full z-50 px-10 py-6 flex justify-between items-center backdrop-blur-md border-b border-white/5">
                         <div className="flex items-center gap-3 logo-box cursor-pointer group">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                                 <rect className="bar bar-1" x="3" y="13" width="4" height="8" rx="1" fill="#60a5fa" />
                                 <rect className="bar bar-2" x="10" y="7" width="4" height="14" rx="1" fill="#3b82f6" />
                                 <rect className="bar bar-3" x="17" y="3" width="4" height="18" rx="1" fill="#1e40af" />
                             </svg>
-                            <span className="text-xl font-extrabold tracking-tighter">BIT-BY-BIT</span>
+                            <span className="font-display text-lg font-black tracking-tighter">BIT-BY-BIT</span>
                         </div>
 
                         <div className="hidden md:flex gap-12">
@@ -192,13 +360,14 @@
 
                     <div className="content-wrap">
                         <header id="home" className="min-h-[85vh] flex flex-col justify-center items-center px-8 text-center relative reveal">
-                            <h1 className="text-7xl md:text-[9rem] font-black tracking-tighter leading-none mb-8 uppercase">BIT-BY-BIT</h1>
+                            <h1 className="glitch font-display text-5xl md:text-[8rem] font-black tracking-tighter leading-none mb-8 uppercase" data-text="BIT-BY-BIT">BIT-BY-BIT</h1>
                             <p className="text-xl md:text-2xl opacity-60 max-w-3xl mx-auto leading-relaxed mb-12">Building high-performance tech systems from the ground up.</p>
                             <a href="#teams" className="btn-grad px-12 py-4 rounded-full font-bold shadow-2xl shadow-blue-500/20 hover:scale-105 transition uppercase tracking-widest">Explore Systems</a>
                         </header>
 
                         <section id="leads" className="py-32 px-8 bg-[var(--section-bg)] shadow-inner reveal">
                             <div className="max-w-6xl mx-auto">
+                                <p className="section-label text-center w-full justify-center mb-3">Core Team</p>
                                 <h2 className="text-4xl font-extrabold text-center mb-20 tracking-tight">The Core Leadership</h2>
                                 <div className="grid md:grid-cols-3 gap-12">
                                     {/* PHOTO SWAP: ATHERVA GETS JIYA'S SEED, GIRLS GET ATHERVA'S SEED */}
@@ -211,6 +380,7 @@
 
                         <section id="teams" className="py-32 px-8 reveal">
                             <div className="max-w-6xl mx-auto">
+                                <p className="section-label text-center w-full justify-center mb-3">Departments</p>
                                 <h2 className="text-4xl font-extrabold text-center mb-16 tracking-tight uppercase">Operational Domains</h2>
                                 <div className="flex flex-wrap justify-center gap-3 mb-20">
                                     {Object.keys(teams).map(t => (
@@ -220,7 +390,7 @@
                                     ))}
                                 </div>
                                 {activeTeam && (
-                                    <div className="glass p-12 rounded-[3rem] grid md:grid-cols-2 gap-16 shadow-2xl">
+                                    <div className="corner-card glass p-12 rounded-[3rem] grid md:grid-cols-2 gap-16 shadow-2xl">
                                         <div className="space-y-8">
                                             <div className="p-8 rounded-3xl bg-blue-600/10 border border-blue-600/20 shadow-sm">
                                                 <p className="text-[10px] font-bold uppercase text-blue-500 tracking-widest mb-2">Team Lead</p>
@@ -247,6 +417,7 @@
                         </section>
 
                         <section id="glimpses" className="py-32 px-8 max-w-7xl mx-auto reveal">
+                            <p className="section-label mb-3">Highlights</p>
                             <h2 className="text-5xl font-black tracking-tight mb-16 uppercase">Success Glimpses.</h2>
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                 {[1,2,3,4,5,6].map(i => (
@@ -257,34 +428,120 @@
                             </div>
                         </section>
 
-                        {/* IMPACT BRIDGE SEPARATOR */}
-                        <section className="py-24 px-8 bg-[var(--bridge-bg)] text-white text-center shadow-2xl relative overflow-hidden">
-                             <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
-                             <div className="max-w-4xl mx-auto relative z-10">
-                                <h3 className="text-3xl font-black mb-4 uppercase tracking-[0.3em]">Scale Your Potential</h3>
-                                <p className="opacity-70 text-lg font-medium">Where every bit of innovation counts. Join the movement.</p>
-                             </div>
+                        {/* SCALE YOUR POTENTIAL - CINEMATIC BANNER */}
+                        <section className="relative py-36 px-8 overflow-hidden" style={{background:'#020617'}}>
+                            {/* animated scan lines */}
+                            <div className="absolute inset-0 pointer-events-none" style={{
+                                backgroundImage:'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(59,130,246,0.03) 2px, rgba(59,130,246,0.03) 4px)',
+                                animation:'scanMove 8s linear infinite'
+                            }}></div>
+
+                            {/* glow orb center */}
+                            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full pointer-events-none"
+                                style={{background:'radial-gradient(ellipse, rgba(59,130,246,0.25) 0%, transparent 70%)', filter:'blur(40px)'}}></div>
+
+                            {/* big faded word behind */}
+                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
+                                <span className="font-display font-black uppercase text-white leading-none"
+                                    style={{fontSize:'22vw', opacity:'0.03', letterSpacing:'-0.05em'}}>SCALE</span>
+                            </div>
+
+                            {/* content */}
+                            <div className="max-w-5xl mx-auto relative z-10 text-center">
+                                {/* top label */}
+                                <div className="flex items-center justify-center gap-3 mb-8">
+                                    <div className="h-px w-16 bg-blue-500 opacity-60"></div>
+                                    <span className="text-blue-400 text-[10px] font-bold uppercase tracking-[0.4em]">Bit-By-Bit</span>
+                                    <div className="h-px w-16 bg-blue-500 opacity-60"></div>
+                                </div>
+
+                                {/* main heading with highlight */}
+                                <h3 className="font-display text-5xl md:text-7xl font-black uppercase text-white leading-none mb-6 tracking-tight">
+                                    Scale Your<br/>
+                                    <span className="relative inline-block">
+                                        <span className="relative z-10" style={{
+                                            WebkitTextStroke:'1px rgba(59,130,246,0.8)',
+                                            color:'transparent',
+                                            filter:'drop-shadow(0 0 20px rgba(59,130,246,0.6))',
+                                            animation:'textPulse 3s ease-in-out infinite'
+                                        }}>Potential.</span>
+                                    </span>
+                                </h3>
+
+                                <p className="text-blue-200/50 text-lg font-medium max-w-xl mx-auto mb-14 leading-relaxed">
+                                    Where every bit of innovation counts.<br/>Join the movement.
+                                </p>
+
+                                {/* CTA */}
+                                <a href="#connect" className="inline-flex items-center gap-3 px-10 py-4 rounded-full font-bold uppercase tracking-widest text-sm text-white border border-blue-500/50 hover:border-blue-400 hover:shadow-[0_0_30px_rgba(59,130,246,0.4)] transition-all duration-400"
+                                    style={{background:'linear-gradient(135deg,rgba(59,130,246,0.2),rgba(30,64,175,0.1))'}}>
+                                    Connect With Us
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                                </a>
+                            </div>
                         </section>
 
-                        <footer id="connect" className="py-40 px-10 text-center bg-[var(--bg)] relative">
-                            <div className="max-w-4xl mx-auto">
-                                <h2 className="text-4xl font-extrabold mb-16 tracking-tight uppercase">Let's Connect</h2>
-                                <div className="grid md:grid-cols-2 gap-8 mb-20">
-                                    <a href="https://www.instagram.com/bitbybit_vitb?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" className="social-card p-12 rounded-[2.5rem] flex flex-col items-center gap-4 group">
-                                        <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center group-hover:bg-white/20 transition">
-                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                        <footer id="connect" className="py-32 px-10 bg-[var(--bg)] relative overflow-hidden">
+                            <canvas id="connect-canvas" className="absolute inset-0 w-full h-full pointer-events-none"></canvas>
+
+                            <div className="max-w-5xl mx-auto relative z-10">
+                                {/* heading */}
+                                <div className="mb-20 text-center">
+                                    <p className="section-label justify-center mb-3">Reach Out</p>
+                                    <h2 className="font-display text-4xl md:text-6xl font-black tracking-tight uppercase">Let's Connect</h2>
+                                    <p className="mt-4 opacity-40 text-sm tracking-widest uppercase">Find us on the internet</p>
+                                </div>
+
+                                {/* cards — horizontal strip */}
+                                <div className="flex flex-col md:flex-row gap-5 mb-20">
+                                    {/* Instagram */}
+                                    <a href="https://www.instagram.com/bitbybit_vitb?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank"
+                                        className="group flex-1 relative overflow-hidden rounded-3xl border border-white/10 p-8 flex items-center gap-6 transition-all duration-500 hover:border-blue-500/60 hover:shadow-[0_0_40px_rgba(59,130,246,0.2)]"
+                                        style={{background:'linear-gradient(135deg,rgba(59,130,246,0.07) 0%,rgba(15,23,42,0.4) 100%)'}}>
+                                        {/* icon big faded */}
+                                        <div className="absolute right-6 bottom-4 opacity-5 group-hover:opacity-10 transition-all duration-500 group-hover:scale-110">
+                                            <svg width="90" height="90" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
                                         </div>
-                                        <span className="text-xl font-bold tracking-widest uppercase">Instagram</span>
+                                        {/* icon circle */}
+                                        <div className="w-14 h-14 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shrink-0 group-hover:bg-blue-500 group-hover:border-blue-500 transition-all duration-400">
+                                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                                        </div>
+                                        <div className="text-left">
+                                            <p className="text-[10px] font-bold uppercase tracking-widest text-blue-500 mb-1">Follow us</p>
+                                            <p className="text-xl font-black tracking-tight">Instagram</p>
+                                            <p className="text-xs opacity-40 mt-1">@bitbybit_vitb</p>
+                                        </div>
+                                        <div className="ml-auto opacity-30 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300">
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                                        </div>
                                     </a>
-                                    <a href="https://www.linkedin.com/company/bit-by-bit-club/posts/?feedView=all" target="_blank" className="social-card p-12 rounded-[2.5rem] flex flex-col items-center gap-4 group">
-                                         <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center group-hover:bg-white/20 transition">
-                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
-                                         </div>
-                                        <span className="text-xl font-bold tracking-widest uppercase">LinkedIn</span>
+
+                                    {/* LinkedIn */}
+                                    <a href="https://www.linkedin.com/company/bit-by-bit-club/posts/?feedView=all" target="_blank"
+                                        className="group flex-1 relative overflow-hidden rounded-3xl border border-white/10 p-8 flex items-center gap-6 transition-all duration-500 hover:border-blue-500/60 hover:shadow-[0_0_40px_rgba(59,130,246,0.2)]"
+                                        style={{background:'linear-gradient(135deg,rgba(30,64,175,0.07) 0%,rgba(15,23,42,0.4) 100%)'}}>
+                                        <div className="absolute right-6 bottom-4 opacity-5 group-hover:opacity-10 transition-all duration-500 group-hover:scale-110">
+                                            <svg width="90" height="90" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+                                        </div>
+                                        <div className="w-14 h-14 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shrink-0 group-hover:bg-blue-500 group-hover:border-blue-500 transition-all duration-400">
+                                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+                                        </div>
+                                        <div className="text-left">
+                                            <p className="text-[10px] font-bold uppercase tracking-widest text-blue-500 mb-1">Join us</p>
+                                            <p className="text-xl font-black tracking-tight">LinkedIn</p>
+                                            <p className="text-xs opacity-40 mt-1">Bit-By-Bit Club</p>
+                                        </div>
+                                        <div className="ml-auto opacity-30 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300">
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                                        </div>
                                     </a>
                                 </div>
-                                <div className="opacity-20 font-bold uppercase tracking-[0.5em] text-[10px] pt-10 border-t border-white/5">
-                                    © Bit-By-Bit Club • VIT Bhopal
+
+                                {/* footer line */}
+                                <div className="flex items-center gap-4 opacity-20">
+                                    <div className="flex-1 h-px bg-current"></div>
+                                    <span className="font-bold uppercase tracking-[0.5em] text-[10px]">© Bit-By-Bit Club • VIT Bhopal</span>
+                                    <div className="flex-1 h-px bg-current"></div>
                                 </div>
                             </div>
                         </footer>
@@ -294,7 +551,7 @@
         };
 
         const LeadCard = ({ name, role, seed }) => (
-            <div className="glass p-10 rounded-[3.5rem] flex flex-col items-center group transition-all duration-700 hover:-translate-y-4 shadow-xl hover:bg-blue-600 hover:text-white border-white/10">
+            <div className="corner-card glass p-10 rounded-[3.5rem] flex flex-col items-center group transition-all duration-700 hover:-translate-y-4 shadow-xl hover:bg-blue-600 hover:text-white border-white/10">
                 {/* Wrapper for Image and Hover Note */}
                 <div className="relative">
                     <div className="w-44 h-44 mb-8 bg-white/5 rounded-full overflow-hidden p-2 group-hover:scale-105 transition-all border-4 border-blue-500/20 group-hover:border-white">
@@ -318,6 +575,172 @@
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
+    </script>
+    <script>
+    // ── MAIN PAGE BACKGROUND ─────────────────────────────────────────
+    (function() {
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let W, H, nodes, mouse = { x: -9999, y: -9999 };
+
+        const isDark = () => document.documentElement.getAttribute('data-theme') !== 'light';
+
+        function resize() {
+            W = canvas.width  = window.innerWidth;
+            H = canvas.height = window.innerHeight;
+            buildNodes();
+        }
+
+        function buildNodes() {
+            const count = Math.floor((W * H) / 14000);
+            nodes = Array.from({ length: count }, () => ({
+                x: Math.random() * W,
+                y: Math.random() * H,
+                vx: (Math.random() - 0.5) * 0.35,
+                vy: (Math.random() - 0.5) * 0.35,
+                r: Math.random() * 1.8 + 0.6,
+                pulse: Math.random() * Math.PI * 2,
+            }));
+        }
+
+        window.addEventListener('resize', resize);
+        window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+
+        function draw() {
+            const dark = isDark();
+            const bg   = dark ? '#0f172a' : '#f8fafc';
+            const dot  = dark ? 'rgba(59,130,246,' : 'rgba(37,99,235,';
+            const line = dark ? 'rgba(59,130,246,' : 'rgba(37,99,235,';
+            const CONN = 140;
+            const MOUSE= 220;
+
+            ctx.fillStyle = bg;
+            ctx.fillRect(0, 0, W, H);
+
+            for (let i = 0; i < nodes.length; i++) {
+                const n = nodes[i];
+                n.pulse += 0.018;
+
+                const dx = n.x - mouse.x, dy = n.y - mouse.y;
+                const dist = Math.sqrt(dx*dx + dy*dy);
+                if (dist < MOUSE) {
+                    const force = (1 - dist / MOUSE) * 0.055;
+                    n.vx += (dx / dist) * force;
+                    n.vy += (dy / dist) * force;
+                }
+
+                n.vx *= 0.982; n.vy *= 0.982;
+                n.x += n.vx;   n.y += n.vy;
+
+                if (n.x < 0) n.x = W; if (n.x > W) n.x = 0;
+                if (n.y < 0) n.y = H; if (n.y > H) n.y = 0;
+
+                const glow = 0.5 + 0.5 * Math.sin(n.pulse);
+                const alpha = dark ? (0.25 + 0.35 * glow) : (0.2 + 0.25 * glow);
+                ctx.beginPath();
+                ctx.arc(n.x, n.y, n.r * (1 + 0.3 * glow), 0, Math.PI * 2);
+                ctx.fillStyle = dot + alpha + ')';
+                ctx.fill();
+
+                for (let j = i + 1; j < nodes.length; j++) {
+                    const m = nodes[j];
+                    const ex = n.x - m.x, ey = n.y - m.y;
+                    const d  = Math.sqrt(ex*ex + ey*ey);
+                    if (d < CONN) {
+                        const a = dark ? (1 - d / CONN) * 0.18 : (1 - d / CONN) * 0.12;
+                        ctx.beginPath();
+                        ctx.moveTo(n.x, n.y);
+                        ctx.lineTo(m.x, m.y);
+                        ctx.strokeStyle = line + a + ')';
+                        ctx.lineWidth = 0.8;
+                        ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(draw);
+        }
+
+        resize();
+        draw();
+    })();
+
+    // ── CONNECT SECTION BACKGROUND ───────────────────────────────────
+
+        // wait for React to mount then init
+        const initConnect = () => {
+            const canvas = document.getElementById('connect-canvas');
+            if (!canvas) { setTimeout(initConnect, 300); return; }
+            const ctx = canvas.getContext('2d');
+            let W, H, nodes;
+
+            const isDark = () => document.documentElement.getAttribute('data-theme') !== 'light';
+
+            function resize() {
+                const rect = canvas.parentElement.getBoundingClientRect();
+                W = canvas.width  = rect.width;
+                H = canvas.height = rect.height;
+                buildNodes();
+            }
+
+            function buildNodes() {
+                const count = Math.floor((W * H) / 12000);
+                nodes = Array.from({ length: count }, () => ({
+                    x: Math.random() * W,
+                    y: Math.random() * H,
+                    vx: (Math.random() - 0.5) * 0.3,
+                    vy: (Math.random() - 0.5) * 0.3,
+                    r: Math.random() * 1.6 + 0.5,
+                    pulse: Math.random() * Math.PI * 2,
+                }));
+            }
+
+            window.addEventListener('resize', resize);
+
+            function draw() {
+                const dark = isDark();
+                const dot  = dark ? 'rgba(59,130,246,' : 'rgba(37,99,235,';
+                const line = dark ? 'rgba(59,130,246,' : 'rgba(37,99,235,';
+                const CONN = 130;
+
+                ctx.clearRect(0, 0, W, H);
+
+                for (let i = 0; i < nodes.length; i++) {
+                    const n = nodes[i];
+                    n.pulse += 0.018;
+                    n.vx *= 0.995; n.vy *= 0.995;
+                    n.x += n.vx;   n.y += n.vy;
+                    if (n.x < 0) n.x = W; if (n.x > W) n.x = 0;
+                    if (n.y < 0) n.y = H; if (n.y > H) n.y = 0;
+
+                    const glow  = 0.5 + 0.5 * Math.sin(n.pulse);
+                    const alpha = dark ? (0.25 + 0.35 * glow) : (0.2 + 0.25 * glow);
+                    ctx.beginPath();
+                    ctx.arc(n.x, n.y, n.r * (1 + 0.3 * glow), 0, Math.PI * 2);
+                    ctx.fillStyle = dot + alpha + ')';
+                    ctx.fill();
+
+                    for (let j = i + 1; j < nodes.length; j++) {
+                        const m = nodes[j];
+                        const ex = n.x - m.x, ey = n.y - m.y;
+                        const d  = Math.sqrt(ex*ex + ey*ey);
+                        if (d < CONN) {
+                            const a = dark ? (1 - d / CONN) * 0.18 : (1 - d / CONN) * 0.12;
+                            ctx.beginPath();
+                            ctx.moveTo(n.x, n.y);
+                            ctx.lineTo(m.x, m.y);
+                            ctx.strokeStyle = line + a + ')';
+                            ctx.lineWidth = 0.7;
+                            ctx.stroke();
+                        }
+                    }
+                }
+                requestAnimationFrame(draw);
+            }
+
+            resize();
+            draw();
+        };
+        setTimeout(initConnect, 1000);
     </script>
 </body>
 </html>
