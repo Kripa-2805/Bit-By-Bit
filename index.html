@@ -30,6 +30,52 @@
             overflow-x: hidden; cursor: none;
         }
 
+        /* TOUCH RIPPLE */
+        .touch-ripple {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%) scale(0);
+            background: radial-gradient(circle, rgba(59,130,246,0.5) 0%, rgba(59,130,246,0.1) 60%, transparent 100%);
+            animation: touchRipple 0.7s ease-out forwards;
+        }
+        @keyframes touchRipple {
+            0%   { transform: translate(-50%,-50%) scale(0); opacity: 1; }
+            100% { transform: translate(-50%,-50%) scale(6); opacity: 0; }
+        }
+
+        /* TOUCH SPARK PARTICLE */
+        .touch-spark {
+            position: fixed;
+            width: 5px; height: 5px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            background: var(--primary);
+            animation: sparkFly 0.6s ease-out forwards;
+        }
+        @keyframes sparkFly {
+            0%   { transform: translate(0,0) scale(1); opacity: 1; }
+            100% { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; }
+        }
+
+        /* MOBILE TOUCH TRAIL */
+        .touch-trail-dot {
+            position: fixed;
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9990;
+            background: var(--primary);
+            transform: translate(-50%, -50%);
+            animation: trailFade 0.5s ease-out forwards;
+        }
+        @keyframes trailFade {
+            0%   { opacity: 0.7; transform: translate(-50%,-50%) scale(1); }
+            100% { opacity: 0;   transform: translate(-50%,-50%) scale(0.2); }
+        }
+
         /* TYPING LOADER FIX
         /* TYPING LOADER ANIMATION */
         #loader {
@@ -95,6 +141,122 @@
         }
 
         .content-wrap { padding-top: 100px; }
+
+        /* MOBILE NAV HAMBURGER */
+        .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; z-index: 100; }
+        .hamburger span { display: block; width: 24px; height: 2px; background: currentColor; border-radius: 2px; transition: all 0.3s; }
+        .hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+        /* MOBILE DROPDOWN MENU */
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 72px; left: 0; right: 0;
+            background: rgba(15,23,42,0.97);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(59,130,246,0.2);
+            z-index: 49;
+            padding: 20px;
+            flex-direction: column;
+            gap: 4px;
+        }
+        [data-theme='light'] .mobile-menu { background: rgba(248,250,252,0.97); }
+        .mobile-menu.open { display: flex; }
+        .mobile-menu a {
+            padding: 14px 16px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 13px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+        .mobile-menu a:active {
+            background: rgba(59,130,246,0.15);
+            border-color: rgba(59,130,246,0.3);
+            transform: scale(0.97);
+        }
+
+        @media (max-width: 768px) {
+            .hamburger { display: flex; }
+
+            /* Nav */
+            nav { padding-left: 20px !important; padding-right: 20px !important; padding-top: 16px !important; padding-bottom: 16px !important; }
+
+            /* Hero */
+            header#home { padding-left: 20px !important; padding-right: 20px !important; min-height: 92vh !important; }
+            .glitch { font-size: clamp(3rem, 18vw, 5rem) !important; }
+            header#home p { font-size: 1rem !important; }
+            header#home a { padding: 14px 28px !important; font-size: 12px !important; }
+
+            /* Sections */
+            section#leads, section#teams, section#glimpses { 
+                padding-top: 60px !important; padding-bottom: 60px !important;
+                padding-left: 16px !important; padding-right: 16px !important;
+            }
+
+            /* Leads grid */
+            section#leads .grid { grid-template-columns: 1fr !important; gap: 24px !important; }
+            section#leads h2 { font-size: 1.8rem !important; margin-bottom: 32px !important; }
+
+            /* LeadCard mobile */
+            .corner-card.glass.p-10 { padding: 28px 20px !important; border-radius: 2rem !important; }
+            .corner-card .w-44 { width: 100px !important; height: 100px !important; margin-bottom: 20px !important; }
+            .corner-card h3 { font-size: 1.5rem !important; }
+            .corner-card .-top-4.-right-12 { display: none !important; }
+
+            /* Teams section */
+            section#teams h2 { font-size: 1.8rem !important; }
+            section#teams .corner-card { padding: 20px 16px !important; border-radius: 1.5rem !important; }
+            section#teams .corner-card .grid { grid-template-columns: 1fr !important; gap: 16px !important; }
+            section#teams h4 { font-size: 1.6rem !important; }
+            section#teams .p-8 { padding: 20px !important; }
+            section#teams .p-10 { padding: 20px !important; }
+            section#teams .flex-wrap.gap-3 { gap: 8px !important; margin-bottom: 32px !important; }
+            section#teams button { padding: 10px 14px !important; font-size: 11px !important; border-radius: 10px !important; }
+
+            /* Glimpses */
+            section#glimpses { padding-left: 16px !important; padding-right: 16px !important; }
+            section#glimpses h2 { font-size: 2rem !important; }
+            section#glimpses .grid { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
+            section#glimpses .md\:col-span-2 { grid-column: span 2 !important; }
+
+            /* Scale potential banner */
+            .font-display.text-5xl.md\:text-7xl { font-size: 2.5rem !important; }
+            section .py-36 { padding-top: 64px !important; padding-bottom: 64px !important; }
+
+            /* Connect / Footer */
+            footer#connect { padding: 60px 16px !important; }
+            footer#connect h2 { font-size: 2rem !important; }
+            footer#connect .flex-col.md\:flex-row { gap: 12px !important; }
+            footer#connect a.group { padding: 20px 16px !important; border-radius: 1.5rem !important; gap: 14px !important; }
+            footer#connect .w-14.h-14 { width: 48px !important; height: 48px !important; border-radius: 14px !important; }
+            footer#connect .text-xl { font-size: 1rem !important; }
+            footer#connect .mb-20 { margin-bottom: 40px !important; }
+        }
+
+        /* Touch-tap active bounce for cards & buttons */
+        @media (hover: none) and (pointer: coarse) {
+            body { cursor: auto; }
+            .social-card:active, footer a.group:active {
+                transform: scale(0.96) translateY(2px) !important;
+                transition: transform 0.1s ease !important;
+            }
+            section#teams button:active {
+                transform: scale(0.93) !important;
+            }
+            header#home a:active, .btn-grad:active {
+                transform: scale(0.95) !important;
+            }
+            /* Touch tilt effect for lead cards */
+            .corner-card.glass:active {
+                transform: scale(0.97) !important;
+                transition: transform 0.15s ease !important;
+            }
+        }
 
         /* BACKGROUND CANVAS */
         #bg-canvas {
@@ -350,20 +512,41 @@
                             ))}
                         </div>
 
-                        <div onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className="theme-toggle-box">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                                <circle cx="12" cy="12" r="4" fill={theme === 'dark' ? 'white' : 'black'} />
-                                <circle cx="12" cy="4" r="1" fill="currentColor" />
-                                <circle cx="12" cy="20" r="1" fill="currentColor" />
-                                <circle cx="4" cy="12" r="1" fill="currentColor" />
-                                <circle cx="20" cy="12" r="1" fill="currentColor" />
-                                <circle cx="6.34" cy="6.34" r="1" fill="currentColor" />
-                                <circle cx="17.66" cy="17.66" r="1" fill="currentColor" />
-                                <circle cx="6.34" cy="17.66" r="1" fill="currentColor" />
-                                <circle cx="17.66" cy="6.34" r="1" fill="currentColor" />
-                            </svg>
+                        <div className="flex items-center gap-3">
+                            <div onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className="theme-toggle-box">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                                    <circle cx="12" cy="12" r="4" fill={theme === 'dark' ? 'white' : 'black'} />
+                                    <circle cx="12" cy="4" r="1" fill="currentColor" />
+                                    <circle cx="12" cy="20" r="1" fill="currentColor" />
+                                    <circle cx="4" cy="12" r="1" fill="currentColor" />
+                                    <circle cx="20" cy="12" r="1" fill="currentColor" />
+                                    <circle cx="6.34" cy="6.34" r="1" fill="currentColor" />
+                                    <circle cx="17.66" cy="17.66" r="1" fill="currentColor" />
+                                    <circle cx="6.34" cy="17.66" r="1" fill="currentColor" />
+                                    <circle cx="17.66" cy="6.34" r="1" fill="currentColor" />
+                                </svg>
+                            </div>
+                            <div id="hamburger" className="hamburger md:hidden" onClick={() => {
+                                const hb = document.getElementById('hamburger');
+                                const mm = document.getElementById('mobile-menu');
+                                hb.classList.toggle('open');
+                                mm.classList.toggle('open');
+                            }}>
+                                <span></span><span></span><span></span>
+                            </div>
                         </div>
                     </nav>
+
+                    {/* Mobile dropdown menu */}
+                    <div id="mobile-menu" className="mobile-menu">
+                        {['home', 'leads', 'teams', 'glimpses', 'connect'].map(item => (
+                            <a key={item} href={`#${item}`} onClick={() => {
+                                document.getElementById('hamburger').classList.remove('open');
+                                document.getElementById('mobile-menu').classList.remove('open');
+                            }}
+                            style={{color:'var(--text)'}}>{item}</a>
+                        ))}
+                    </div>
 
                     <div className="content-wrap">
                         <header id="home" className="min-h-[85vh] flex flex-col justify-center items-center px-8 text-center relative reveal">
@@ -589,6 +772,7 @@
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let W, H, nodes, mouse = { x: -9999, y: -9999 };
+        window._bgMouse = mouse;
 
         const isDark = () => document.documentElement.getAttribute('data-theme') !== 'light';
 
@@ -748,6 +932,73 @@
             draw();
         };
         setTimeout(initConnect, 1000);
+    </script>
+    <script>
+    // ── TOUCH INTERACTIONS FOR MOBILE ─────────────────────────────────
+    (function() {
+        const isTouchDevice = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+        if (!isTouchDevice) return;
+
+        // Touch ripple + sparks on tap
+        function spawnRipple(x, y) {
+            const el = document.createElement('div');
+            el.className = 'touch-ripple';
+            el.style.cssText = `left:${x}px;top:${y}px;width:60px;height:60px;`;
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 700);
+        }
+
+        function spawnSparks(x, y) {
+            const count = 7;
+            for (let i = 0; i < count; i++) {
+                const el = document.createElement('div');
+                el.className = 'touch-spark';
+                const angle = (Math.PI * 2 / count) * i + Math.random() * 0.4;
+                const dist  = 30 + Math.random() * 40;
+                const dx    = Math.cos(angle) * dist;
+                const dy    = Math.sin(angle) * dist;
+                el.style.cssText = `left:${x}px;top:${y}px;--dx:${dx}px;--dy:${dy}px;`;
+                document.body.appendChild(el);
+                setTimeout(() => el.remove(), 600);
+            }
+        }
+
+        // Trail dots while dragging
+        let lastTrail = 0;
+        function spawnTrail(x, y) {
+            const now = Date.now();
+            if (now - lastTrail < 40) return;
+            lastTrail = now;
+            const el = document.createElement('div');
+            el.className = 'touch-trail-dot';
+            el.style.cssText = `left:${x}px;top:${y}px;`;
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 500);
+        }
+
+        document.addEventListener('touchstart', e => {
+            const t = e.touches[0];
+            spawnRipple(t.clientX, t.clientY);
+            spawnSparks(t.clientX, t.clientY);
+        }, { passive: true });
+
+        document.addEventListener('touchmove', e => {
+            const t = e.touches[0];
+            spawnTrail(t.clientX, t.clientY);
+            // Also feed touch position to the canvas particle system
+            if (window._bgMouse) {
+                window._bgMouse.x = t.clientX;
+                window._bgMouse.y = t.clientY;
+            }
+        }, { passive: true });
+
+        document.addEventListener('touchend', () => {
+            if (window._bgMouse) {
+                window._bgMouse.x = -9999;
+                window._bgMouse.y = -9999;
+            }
+        }, { passive: true });
+    })();
     </script>
 </body>
 </html>
