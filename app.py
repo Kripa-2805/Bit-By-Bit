@@ -1,11 +1,13 @@
-from flask import Flask, render_template
+from flask import Flask
 import os
 
-app = Flask(__name__, template_folder=os.path.dirname(os.path.abspath(__file__)))
+app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    with open(os.path.join(base_dir, 'index.html'), 'r', encoding='utf-8') as f:
+        return f.read()
 
 if __name__ == '__main__':
     app.run(debug=True)
