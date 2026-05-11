@@ -318,10 +318,17 @@
                     setTimeout(() => loader.style.display = 'none', 800);
                 }, 3000);
 
-                fetch('/api/teams').then(r => r.json()).then(data => {
-                    setTeams(data);
-                    setActiveTeam(Object.keys(data)[0]);
-                });
+                const data = {
+                    "Technical": { "lead": "Aryan Verma", "co_lead": "Sanya Malhotra", "core": ["Ishaan Singh", "Meera Rao", "Kabir Khan", "Ananya D."] },
+                    "PR and Outreach": { "lead": "Manav G.", "co_lead": "Sia K.", "core": ["Yash R.", "Tanya V.", "Omer S."] },
+                    "Design": { "lead": "Riya Kapoor", "co_lead": "Arjun Das", "core": ["Tara S.", "Zayn M.", "Kyra G."] },
+                    "Event Management": { "lead": "Armaan J.", "co_lead": "Nandini S.", "core": ["Pranav L.", "Deepak K.", "Simran M."] },
+                    "Social Media": { "lead": "Kiara Advani", "co_lead": "Varun D.", "core": ["Sneha W.", "Aditi P.", "Rahul J."] },
+                    "Content": { "lead": "Devansh S.", "co_lead": "Ipsita R.", "core": ["Siddharth B.", "Rohan M."] },
+                    "Finance": { "lead": "Raghav B.", "co_lead": "Esha T.", "core": ["Amit S.", "Gaurav P."] }
+                };
+                setTeams(data);
+                setActiveTeam(Object.keys(data)[0]);
                 return () => { if (onMouseMove) window.removeEventListener('mousemove', onMouseMove); };
             }, [theme]);
 
