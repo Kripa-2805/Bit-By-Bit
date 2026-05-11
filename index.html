@@ -186,8 +186,15 @@
             /* Nav */
             nav { padding-left: 20px !important; padding-right: 20px !important; padding-top: 16px !important; padding-bottom: 16px !important; }
 
-            /* Hero */
-            header#home { padding-left: 20px !important; padding-right: 20px !important; min-height: 92vh !important; }
+            /* Hero — reduce height so title isn't pushed far down */
+            header#home { 
+                padding-left: 20px !important; padding-right: 20px !important; 
+                min-height: unset !important;
+                height: auto !important;
+                padding-top: 60px !important;
+                padding-bottom: 60px !important;
+                justify-content: flex-start !important;
+            }
             .glitch { font-size: clamp(3rem, 18vw, 5rem) !important; }
             header#home p { font-size: 1rem !important; }
             header#home a { padding: 14px 28px !important; font-size: 12px !important; }
