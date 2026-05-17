@@ -12,15 +12,17 @@
     
     <style>
         :root { 
-            --primary: #3b82f6; --bg: #0f172a; --text: #f8fafc; 
-            --accent: rgba(59, 130, 246, 0.4); --section-bg: rgba(30, 41, 59, 0.6); 
-            --bridge-bg: #1e293b;
+            --primary: #2563eb; --bg: #f8fafc; --text: #0f172a; 
+            --accent: rgba(37, 99, 235, 0.25); --section-bg: rgba(226,232,240,0.7); 
+            --bridge-bg: #2563eb; --card-bg: rgba(255,255,255,0.9);
+            --nav-bg: rgba(248,250,252,0.95); --footer-bg: #1e293b;
         }
 
-        [data-theme='light'] { 
-            --bg: #f8fafc; --text: #0f172a; --primary: #2563eb; 
-            --accent: rgba(37, 99, 235, 0.25); --section-bg: #e2e8f0; 
-            --bridge-bg: #2563eb;
+        [data-theme='dark'] { 
+            --bg: #0a0f1e; --text: #e2e8f0; --primary: #3b82f6; 
+            --accent: rgba(59, 130, 246, 0.4); --section-bg: rgba(15,23,42,0.8); 
+            --bridge-bg: #1e293b; --card-bg: rgba(15,25,50,0.6);
+            --nav-bg: rgba(10,15,30,0.95); --footer-bg: #020617;
         }
 
         body { 
@@ -79,32 +81,79 @@
         /* TYPING LOADER FIX
         /* TYPING LOADER ANIMATION */
         #loader {
-            position: fixed; inset: 0; background: #020617; z-index: 1000;
+            position: fixed; inset: 0; background: #f8fafc; z-index: 1000;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             transition: opacity 0.8s ease;
         }
         .typing-container {
             font-family: 'Courier New', monospace;
-            color: #3b82f6;
+            color: #2563eb;
             font-size: 14px;
             letter-spacing: 2px;
             width: 0;
             white-space: nowrap;
             overflow: hidden;
-            border-right: 3px solid #3b82f6;
+            border-right: 3px solid #2563eb;
             animation: typing 2.5s steps(30, end) forwards, blink .5s step-end infinite;
         }
+        .loader-sub {
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            letter-spacing: 4px;
+            color: #94a3b8;
+            margin-top: 10px;
+            text-transform: uppercase;
+            opacity: 0;
+            animation: fadeInSub 0.6s ease 2s forwards;
+        }
+        @keyframes fadeInSub { to { opacity: 1; } }
         @keyframes typing { from { width: 0 } to { width: 280px } }
-        @keyframes blink { from, to { border-color: transparent } 50% { border-color: #3b82f6 } }
+        @keyframes blink { from, to { border-color: transparent } 50% { border-color: #2563eb } }
 
         /* HEADING FONT */
         .font-display { font-family: 'Orbitron', sans-serif; }
 
-        /* CURSOR — hidden on touch devices */
-        #cursor { width: 10px; height: 10px; background: var(--primary); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; }
-        #cursor-ring { width: 40px; height: 40px; border: 2px solid var(--primary); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9998; transition: transform 0.1s; }
+        /* CURSOR — arrow + coordinate tag */
+        #cursor, #cursor-ring { display: none !important; }
+
+        #custom-cursor {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            top: 0; left: 0;
+            will-change: transform;
+        }
+        #custom-cursor svg {
+            display: block;
+            filter: drop-shadow(0 1px 3px rgba(0,0,0,0.18));
+        }
+        #cursor-tag {
+            position: absolute;
+            top: 18px;
+            left: 14px;
+            background: #2563eb;
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            padding: 3px 8px;
+            border-radius: 5px;
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0.92;
+            transition: opacity 0.2s;
+        }
+        [data-theme='dark'] #cursor-tag {
+            background: #3b82f6;
+            box-shadow: 0 0 10px rgba(59,130,246,0.4);
+        }
+        /* on hover over interactive elements — tag shows element type */
+        body.cursor-hover #cursor-tag {
+            background: #1d4ed8;
+        }
         @media (hover: none) and (pointer: coarse) {
-            #cursor, #cursor-ring { display: none !important; }
+            #custom-cursor { display: none !important; }
             body { cursor: auto; }
         }
 
@@ -154,15 +203,15 @@
             display: none;
             position: fixed;
             top: 72px; left: 0; right: 0;
-            background: rgba(15,23,42,0.97);
+            background: rgba(248,250,252,0.97);
             backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(59,130,246,0.2);
+            border-bottom: 1px solid rgba(37,99,235,0.2);
             z-index: 49;
             padding: 20px;
             flex-direction: column;
             gap: 4px;
         }
-        [data-theme='light'] .mobile-menu { background: rgba(248,250,252,0.97); }
+        [data-theme='dark'] .mobile-menu { background: rgba(10,15,30,0.97); border-bottom-color: rgba(59,130,246,0.2); }
         .mobile-menu.open { display: flex; }
         .mobile-menu a {
             padding: 14px 16px;
@@ -236,13 +285,12 @@
             section .py-36 { padding-top: 64px !important; padding-bottom: 64px !important; }
 
             /* Connect / Footer */
-            footer#connect { padding: 60px 16px !important; }
-            footer#connect h2 { font-size: 2rem !important; }
-            footer#connect .flex-col.md\:flex-row { gap: 12px !important; }
-            footer#connect a.group { padding: 20px 16px !important; border-radius: 1.5rem !important; gap: 14px !important; }
-            footer#connect .w-14.h-14 { width: 48px !important; height: 48px !important; border-radius: 14px !important; }
-            footer#connect .text-xl { font-size: 1rem !important; }
-            footer#connect .mb-20 { margin-bottom: 40px !important; }
+            footer.site-footer { padding: 60px 16px !important; }
+            footer.site-footer .grid { grid-template-columns: 1fr !important; gap: 32px !important; }
+
+            /* Events + Reviews */
+            section#events .grid { grid-template-columns: 1fr !important; }
+            section#reviews .grid { grid-template-columns: 1fr !important; }
         }
 
         /* Touch-tap active bounce for cards & buttons */
@@ -280,11 +328,12 @@
         /* THEME TOGGLE DOODLE (MATCHING IMAGE) */
         .theme-toggle-box {
             width: 48px; height: 48px; border-radius: 12px;
-            border: 1.5px solid rgba(255,255,255,0.1);
+            border: 1.5px solid rgba(0,0,0,0.1);
             display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: 0.3s; background: rgba(255,255,255,0.05);
+            cursor: pointer; transition: 0.3s; background: #ffffff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
         }
-        [data-theme='light'] .theme-toggle-box { border-color: rgba(0,0,0,0.1); background: #ffffff; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        [data-theme='dark'] .theme-toggle-box { border-color: rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); box-shadow: none; }
 
 
         .nav-link { position: relative; font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 0.1em; }
@@ -293,8 +342,8 @@
 
         .btn-grad { background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); color: white; }
 
-        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(14px); border: 1px solid rgba(255,255,255,0.1); }
-        [data-theme='light'] .glass { background: rgba(255, 255, 255, 0.85); border-color: rgba(37, 99, 235, 0.1); }
+        .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(14px); border: 1px solid rgba(37,99,235,0.12); }
+        [data-theme='dark'] .glass { background: rgba(15,25,50,0.55); border-color: rgba(59,130,246,0.15); }
 
         .reveal { animation: revealUp 0.8s ease forwards; opacity: 0; }
         @keyframes revealUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
@@ -417,10 +466,128 @@
             100%            { transform: translate(0);         opacity: 0; }
         }
 
-        /* CARD CORNER BRACKETS */
+        /* EVENT CARDS */
+        .event-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(37,99,235,0.15);
+            border-radius: 2rem;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+        [data-theme='dark'] .event-card { border-color: rgba(59,130,246,0.2); }
+        .event-card:hover { transform: translateY(-8px); box-shadow: 0 30px 60px rgba(37,99,235,0.2); border-color: var(--primary); }
+
+        /* REVIEW CARDS */
+        .review-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(37,99,235,0.12);
+            border-radius: 1.5rem;
+            transition: all 0.4s ease;
+        }
+        [data-theme='dark'] .review-card { border-color: rgba(59,130,246,0.18); }
+        .review-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(37,99,235,0.15); }
+
+        /* FORM STYLES */
+        .form-input {
+            width: 100%;
+            padding: 14px 18px;
+            background: var(--card-bg);
+            border: 1.5px solid rgba(37,99,235,0.2);
+            border-radius: 14px;
+            color: var(--text);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+            outline: none;
+        }
+        [data-theme='dark'] .form-input { border-color: rgba(59,130,246,0.25); }
+        .form-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.12); }
+        .form-input::placeholder { opacity: 0.45; }
+
+        /* STATS COUNTER */
+        .stat-number {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            background: linear-gradient(135deg, var(--primary), #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* PROPER FOOTER */
+        .site-footer {
+            background: var(--footer-bg);
+            color: #94a3b8;
+        }
+        [data-theme='dark'] .site-footer { background: #020617; }
+
+        /* NAV BG */
+        nav { background: var(--nav-bg) !important; }
+
+        /* Light mode section bg overrides */
+        .section-alt { background: var(--section-bg); }
+
+        /* Scroll reveal */
+        .scroll-reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.7s ease, transform 0.7s ease; }
+        .scroll-reveal.visible { opacity: 1; transform: translateY(0); }
+    
         .corner-card {
             position: relative;
         }
+        /* ── MARQUEE ── */
+        .marquee-wrap { overflow: hidden; border-top: 1px solid rgba(37,99,235,0.12); border-bottom: 1px solid rgba(37,99,235,0.12); background: rgba(37,99,235,0.04); }
+        [data-theme='dark'] .marquee-wrap { background: rgba(59,130,246,0.06); }
+        .marquee-track { display: flex; width: max-content; animation: marqueeScroll 32s linear infinite; }
+        .marquee-track:hover { animation-play-state: paused; }
+        .marquee-item { padding: 14px 40px; font-size: 11px; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; white-space: nowrap; opacity: 0.5; display: flex; align-items: center; gap: 14px; }
+        .marquee-item .mdot { width: 5px; height: 5px; border-radius: 50%; background: var(--primary); flex-shrink: 0; }
+        .marquee-item.hi { color: var(--primary); opacity: 1; }
+        @keyframes marqueeScroll { from { transform:translateX(0) } to { transform:translateX(-50%) } }
+
+        /* ── STICKY FLOAT CTA ── */
+        #float-cta {
+            position: fixed; bottom: 28px; right: 28px; z-index: 500;
+            background: #2563eb; color: white;
+            font-size: 12px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase;
+            padding: 14px 22px; border-radius: 100px;
+            box-shadow: 0 8px 30px rgba(37,99,235,0.45);
+            cursor: pointer; border: none;
+            display: flex; align-items: center; gap: 8px;
+            transition: transform 0.2s, box-shadow 0.2s, opacity 0.4s;
+            opacity: 0; pointer-events: none;
+        }
+        #float-cta.visible { opacity: 1; pointer-events: all; }
+        #float-cta:hover { transform: translateY(-3px) scale(1.04); box-shadow: 0 16px 40px rgba(37,99,235,0.55); }
+        .pulse-ring {
+            position: absolute; inset: -4px; border-radius: 100px;
+            border: 2px solid rgba(37,99,235,0.5);
+            animation: pulseCTA 2s ease-out infinite; pointer-events: none;
+        }
+        @keyframes pulseCTA { 0% { transform:scale(1); opacity:0.7 } 100% { transform:scale(1.2); opacity:0 } }
+
+        /* ── HERO BADGE ── */
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 8px 18px; border-radius: 100px;
+            background: rgba(37,99,235,0.08); border: 1px solid rgba(37,99,235,0.2);
+            font-size: 11px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase;
+            margin-bottom: 28px; color: var(--primary);
+        }
+        .hero-badge .live-dot { width: 7px; height: 7px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 0 3px rgba(34,197,94,0.2); animation: livePulse 1.8s ease-in-out infinite; flex-shrink:0; }
+        @keyframes livePulse { 0%,100%{box-shadow:0 0 0 3px rgba(34,197,94,0.2)} 50%{box-shadow:0 0 0 7px rgba(34,197,94,0.08)} }
+
+        /* ── LEAD CARD 3D ── */
+        .lead-tilt { transform-style: preserve-3d; will-change: transform; transition: box-shadow 0.3s; }
+        .lead-tilt:hover { box-shadow: 0 40px 80px rgba(37,99,235,0.18); }
+        .lead-inner { transition: transform 0.12s ease; transform-style: preserve-3d; }
+
+        /* ── SCROLL HINT ── */
+        .scroll-hint { display:flex; flex-direction:column; align-items:center; gap:5px; opacity:0.3; animation:bounceHint 2.2s ease-in-out infinite; margin-top:48px; }
+        @keyframes bounceHint { 0%,100%{transform:translateY(0)} 50%{transform:translateY(8px)} }
+
         .corner-card::before, .corner-card::after {
             content: '';
             position: absolute;
@@ -445,39 +612,80 @@
 </head>
 <body>
     <div id="loader">
+        <!-- Logo bars -->
         <div class="flex items-end gap-1.5 h-10 mb-6">
-            <div class="w-2 bg-blue-500 h-1/2"></div>
-            <div class="w-2 bg-blue-600 h-full"></div>
-            <div class="w-2 bg-blue-700 h-3/4"></div>
+            <div class="w-2 rounded-sm" style="background:#93c5fd;height:40%"></div>
+            <div class="w-2 rounded-sm" style="background:#3b82f6;height:100%"></div>
+            <div class="w-2 rounded-sm" style="background:#2563eb;height:70%"></div>
         </div>
-        <div class="typing-container">&gt; LOADING BIT-BY-BIT...</div>
+        <div class="typing-container">&gt; INITIALISING BIT-BY-BIT...</div>
+        <div class="loader-sub">VIT Bhopal · Tech Club</div>
+        <!-- thin progress line -->
+        <div style="position:absolute;bottom:0;left:0;height:2px;background:linear-gradient(90deg,#2563eb,#93c5fd);animation:progress 2.8s ease forwards;"></div>
     </div>
+    <style>@keyframes progress{from{width:0}to{width:100%}}</style>
 
     <div id="cursor"></div>
     <div id="cursor-ring"></div>
+    <div id="custom-cursor">
+        <svg width="20" height="24" viewBox="0 0 20 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 2L3 19L8 14.5L11.5 22L14 21L10.5 13.5H17Z" fill="#2563eb" stroke="white" stroke-width="1" stroke-linejoin="round"/>
+        </svg>
+        <div id="cursor-tag">x:0 y:0</div>
+    </div>
     <canvas id="bg-canvas"></canvas>
     <div id="root"></div>
+    <button id="float-cta" onclick="document.getElementById('join').scrollIntoView({behavior:'smooth'})">
+        <div class="pulse-ring"></div>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Join the Club
+    </button>
 
     <script type="text/babel">
         const { useState, useEffect } = React;
 
         const App = () => {
-            const [theme, setTheme] = useState('dark');
+            const [theme, setTheme] = useState('light');
             const [teams, setTeams] = useState({});
             const [activeTeam, setActiveTeam] = useState(null);
 
             useEffect(() => {
                 document.documentElement.setAttribute('data-theme', theme);
-                const cursor = document.getElementById('cursor');
-                const ring = document.getElementById('cursor-ring');
                 const isTouchDevice = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
-                let onMouseMove;
                 if (!isTouchDevice) {
-                    onMouseMove = (e) => {
-                        cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px';
-                        ring.style.left = (e.clientX - 20) + 'px'; ring.style.top = (e.clientY - 20) + 'px';
-                    };
-                    window.addEventListener('mousemove', onMouseMove);
+                    const cur = document.getElementById('custom-cursor');
+                    const tag = document.getElementById('cursor-tag');
+
+                    let mx = -100, my = -100;
+
+                    const interactiveSelector = 'a, button, [role="button"], input, select, textarea, label, .corner-card, .event-card, .review-card, .theme-toggle-box, .logo-box';
+
+                    window.addEventListener('mousemove', e => {
+                        mx = e.clientX;
+                        my = e.clientY;
+                        cur.style.transform = `translate(${mx}px, ${my}px)`;
+                        tag.textContent = `x:${mx} y:${my}`;
+                    });
+
+                    document.addEventListener('mouseover', e => {
+                        if (e.target.closest(interactiveSelector)) {
+                            document.body.classList.add('cursor-hover');
+                            const el = e.target.closest(interactiveSelector);
+                            const type = el.tagName.toLowerCase();
+                            tag.textContent = type === 'a' ? '→ link' : type === 'button' || type === 'input' || type === 'select' || type === 'textarea' ? '◎ ' + type : '◈ element';
+                        }
+                    });
+
+                    document.addEventListener('mouseout', e => {
+                        if (e.target.closest(interactiveSelector)) {
+                            document.body.classList.remove('cursor-hover');
+                            tag.textContent = `x:${mx} y:${my}`;
+                        }
+                    });
+
+                    document.addEventListener('mouseleave', () => {
+                        cur.style.transform = `translate(-200px, -200px)`;
+                    });
                 }
                 
                 // Realistic typing timeout for loader
@@ -498,7 +706,7 @@
                 };
                 setTeams(data);
                 setActiveTeam(Object.keys(data)[0]);
-                return () => { if (onMouseMove) window.removeEventListener('mousemove', onMouseMove); };
+                return () => {};
             }, [theme]);
 
             return (
@@ -513,25 +721,23 @@
                             <span className="font-display text-lg font-black tracking-tighter">BIT-BY-BIT</span>
                         </div>
 
-                        <div className="hidden md:flex gap-12">
-                            {['home', 'leads', 'teams', 'glimpses', 'connect'].map(item => (
+                        <div className="hidden md:flex gap-8">
+                            {['home','leads','teams','events','reviews','connect'].map(item => (
                                 <a key={item} href={`#${item}`} className="nav-link">{item}</a>
                             ))}
                         </div>
 
                         <div className="flex items-center gap-3">
-                            <div onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className="theme-toggle-box">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                                    <circle cx="12" cy="12" r="4" fill={theme === 'dark' ? 'white' : 'black'} />
-                                    <circle cx="12" cy="4" r="1" fill="currentColor" />
-                                    <circle cx="12" cy="20" r="1" fill="currentColor" />
-                                    <circle cx="4" cy="12" r="1" fill="currentColor" />
-                                    <circle cx="20" cy="12" r="1" fill="currentColor" />
-                                    <circle cx="6.34" cy="6.34" r="1" fill="currentColor" />
-                                    <circle cx="17.66" cy="17.66" r="1" fill="currentColor" />
-                                    <circle cx="6.34" cy="17.66" r="1" fill="currentColor" />
-                                    <circle cx="17.66" cy="6.34" r="1" fill="currentColor" />
-                                </svg>
+                            <div onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')} className="theme-toggle-box" title="Toggle theme">
+                                {theme === 'light' ? (
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                                    </svg>
+                                ) : (
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                                        <circle cx="12" cy="12" r="4" fill="white" /><circle cx="12" cy="4" r="1" fill="currentColor" /><circle cx="12" cy="20" r="1" fill="currentColor" /><circle cx="4" cy="12" r="1" fill="currentColor" /><circle cx="20" cy="12" r="1" fill="currentColor" /><circle cx="6.34" cy="6.34" r="1" fill="currentColor" /><circle cx="17.66" cy="17.66" r="1" fill="currentColor" /><circle cx="6.34" cy="17.66" r="1" fill="currentColor" /><circle cx="17.66" cy="6.34" r="1" fill="currentColor" />
+                                    </svg>
+                                )}
                             </div>
                             <div id="hamburger" className="hamburger md:hidden" onClick={() => {
                                 const hb = document.getElementById('hamburger');
@@ -546,7 +752,7 @@
 
                     {/* Mobile dropdown menu */}
                     <div id="mobile-menu" className="mobile-menu">
-                        {['home', 'leads', 'teams', 'glimpses', 'connect'].map(item => (
+                        {['home','leads','teams','events','reviews','connect'].map(item => (
                             <a key={item} href={`#${item}`} onClick={() => {
                                 document.getElementById('hamburger').classList.remove('open');
                                 document.getElementById('mobile-menu').classList.remove('open');
@@ -556,21 +762,100 @@
                     </div>
 
                     <div className="content-wrap">
-                        <header id="home" className="min-h-[85vh] flex flex-col justify-center items-center px-8 text-center relative reveal">
-                            <h1 className="glitch font-display text-5xl md:text-[8rem] font-black tracking-tighter leading-none mb-8 uppercase" data-text="BIT-BY-BIT">BIT-BY-BIT</h1>
-                            <p className="text-xl md:text-2xl opacity-60 max-w-3xl mx-auto leading-relaxed mb-12">Building high-performance tech systems from the ground up.</p>
-                            <a href="#teams" className="btn-grad px-12 py-4 rounded-full font-bold shadow-2xl shadow-blue-500/20 hover:scale-105 transition uppercase tracking-widest">Explore Systems</a>
+                        <header id="home" className="min-h-[90vh] flex flex-col justify-center items-center px-8 text-center relative reveal">
+                            {/* Live badge */}
+                            <div className="hero-badge">
+                                <div className="live-dot"></div>
+                                <span>VIT Bhopal's Tech Club — Est. 2018</span>
+                            </div>
+
+                            <h1 className="glitch font-display text-5xl md:text-[8rem] font-black tracking-tighter leading-none mb-6 uppercase" data-text="BIT-BY-BIT">BIT-BY-BIT</h1>
+
+                            <p className="text-xl md:text-2xl opacity-55 max-w-2xl mx-auto leading-relaxed mb-4">
+                                Where code meets culture.<br/>
+                                <span style={{color:'var(--primary)', opacity:1, fontWeight:700}}>500+ engineers</span> building the future, one bit at a time.
+                            </p>
+
+                            <div className="flex flex-wrap gap-4 justify-center mt-8">
+                                <a href="#teams" className="btn-grad px-10 py-4 rounded-full font-bold shadow-2xl shadow-blue-500/20 hover:scale-105 transition uppercase tracking-widest text-white text-sm">Explore the Club</a>
+                                <a href="#events" className="px-10 py-4 rounded-full font-bold hover:scale-105 transition uppercase tracking-widest text-sm" style={{border:'1.5px solid rgba(37,99,235,0.3)', color:'var(--primary)'}}>See Our Events</a>
+                            </div>
+
+                            {/* Scroll hint */}
+                            <div className="scroll-hint">
+                                <span className="text-[10px] font-bold uppercase tracking-widest">Scroll</span>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+                            </div>
                         </header>
 
-                        <section id="leads" className="py-32 px-8 bg-[var(--section-bg)] shadow-inner reveal">
+                        {/* STATS BAR */}
+                        <div className="section-alt py-16 px-8 scroll-reveal">
+                            <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                                {[
+                                    { num: '500+', label: 'Active Members' },
+                                    { num: '12+', label: 'Events Hosted' },
+                                    { num: '7', label: 'Departments' },
+                                    { num: '6+', label: 'Years Running' },
+                                ].map(s => (
+                                    <div key={s.label}>
+                                        <div className="stat-number">{s.num}</div>
+                                        <p className="text-sm font-bold uppercase tracking-widest opacity-50 mt-2">{s.label}</p>
+                                    </div>
+                                ))}
+                            </div>
+                            {/* Fun tagline */}
+                            <div className="max-w-3xl mx-auto mt-12 text-center">
+                                <div className="inline-flex flex-wrap items-center justify-center gap-3 px-8 py-4 rounded-2xl" style={{border:'1px dashed rgba(37,99,235,0.25)', background:'rgba(37,99,235,0.04)'}}>
+                                    {['∞ Infinite Fun', '· More Chaos To Come', '· Always Shipping', '· Never Settling'].map((t,i) => (
+                                        <span key={i} className="text-xs font-black uppercase tracking-widest" style={{color: i===0 ? 'var(--primary)' : undefined, opacity: i===0 ? 1 : 0.45}}>{t}</span>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* ── MARQUEE TICKER ── */}
+                        <div className="marquee-wrap py-0">
+                            <div className="marquee-track">
+                                {[
+                                    { text: 'Bug Blitz 2024', hi: false },
+                                    { text: '∞ Infinite Chaos', hi: true },
+                                    { text: 'Mindzilaa 2025', hi: false },
+                                    { text: 'Always Building', hi: false },
+                                    { text: 'Career Brew 2025', hi: false },
+                                    { text: 'Never Settling', hi: true },
+                                    { text: 'Playtopia 2026', hi: false },
+                                    { text: '500+ Members Strong', hi: false },
+                                    { text: 'More Chaos To Come', hi: true },
+                                    { text: 'VIT Bhopal × Tech', hi: false },
+                                    // duplicate for seamless loop
+                                    { text: 'Bug Blitz 2024', hi: false },
+                                    { text: '∞ Infinite Chaos', hi: true },
+                                    { text: 'Mindzilaa 2025', hi: false },
+                                    { text: 'Always Building', hi: false },
+                                    { text: 'Career Brew 2025', hi: false },
+                                    { text: 'Never Settling', hi: true },
+                                    { text: 'Playtopia 2026', hi: false },
+                                    { text: '500+ Members Strong', hi: false },
+                                    { text: 'More Chaos To Come', hi: true },
+                                    { text: 'VIT Bhopal × Tech', hi: false },
+                                ].map((item, i) => (
+                                    <div key={i} className={`marquee-item${item.hi ? ' hi' : ''}`}>
+                                        <span className="mdot"></span>
+                                        {item.text}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <section id="leads" className="py-32 px-8 section-alt shadow-inner reveal">
                             <div className="max-w-6xl mx-auto">
                                 <p className="section-label text-center w-full justify-center mb-3">Core Team</p>
                                 <h2 className="text-4xl font-extrabold text-center mb-20 tracking-tight">The Core Leadership</h2>
                                 <div className="grid md:grid-cols-3 gap-12">
                                     {/* PHOTO SWAP: ATHERVA GETS JIYA'S SEED, GIRLS GET ATHERVA'S SEED */}
-                                    <LeadCard name="Atherva Sahai" role="President" seed="Jiya" />
-                                    <LeadCard name="Chavi Agarwal" role="Vice President" seed="Atherva" />
-                                    <LeadCard name="Jiya Arora" role="Gen Secretary" seed="Atherva" />
+                                    <LeadCard name="Atherva Sahai" role="President" seed="Jiya" quote="&quot;Build things that matter. The rest is noise.&quot;" />
+                                    <LeadCard name="Chavi Agarwal" role="Vice President" seed="Atherva" quote="&quot;Community is our strongest feature. Always will be.&quot;" />
+                                    <LeadCard name="Jiya Arora" role="Gen Secretary" seed="Priya" quote="&quot;Every event, every session — it all adds up. Keep showing up.&quot;" />
                                 </div>
                             </div>
                         </section>
@@ -613,15 +898,137 @@
                             </div>
                         </section>
 
-                        <section id="glimpses" className="py-32 px-8 max-w-7xl mx-auto reveal">
-                            <p className="section-label mb-3">Highlights</p>
-                            <h2 className="text-5xl font-black tracking-tight mb-16 uppercase">Success Glimpses.</h2>
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                {[1,2,3,4,5,6].map(i => (
-                                    <div key={i} className={`rounded-3xl overflow-hidden shadow-lg group relative ${i === 1 ? 'md:col-span-2' : ''}`}>
-                                        <img src={`https://picsum.photos/seed/${i+300}/800/600`} className="w-full h-full object-cover transition duration-700 hover:scale-110" />
+                        {/* ── EVENTS SECTION ── */}
+                        <section id="events" className="py-32 px-8 section-alt scroll-reveal">
+                            <div className="max-w-6xl mx-auto">
+                                <p className="section-label text-center w-full justify-center mb-3">Our Events</p>
+                                <h2 className="text-4xl font-extrabold text-center mb-4 tracking-tight uppercase">What We've Built</h2>
+                                <p className="text-center opacity-50 max-w-xl mx-auto mb-16 text-sm leading-relaxed">From hackathons to career fests — every event is designed to push boundaries, build skills, and bring the tech community together.</p>
+
+                                <div className="grid md:grid-cols-2 gap-8">
+                                    {/* BUG BLITZ */}
+                                    <div className="event-card group scroll-reveal">
+                                        <div className="relative overflow-hidden h-52">
+                                            <img src="https://picsum.photos/seed/bugblitz2024/800/400" className="w-full h-full object-cover group-hover:scale-105 transition duration-700" />
+                                            <div className="absolute inset-0" style={{background:'linear-gradient(to top, rgba(10,15,30,0.9) 0%, transparent 60%)'}}></div>
+                                            <span className="absolute top-4 left-4 text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full" style={{background:'rgba(37,99,235,0.9)', color:'white'}}>Hackathon</span>
+                                            <span className="absolute top-4 right-4 text-[10px] font-bold uppercase tracking-widest opacity-70" style={{color:'white'}}>Aug 2024</span>
+                                        </div>
+                                        <div className="p-7">
+                                            <h3 className="text-2xl font-black mb-2 font-display tracking-tight">BUG BLITZ</h3>
+                                            <p className="text-sm opacity-60 leading-relaxed mb-5">A high-intensity competitive debugging marathon where participants raced against the clock to squash bugs, optimize code, and prove their problem-solving prowess. Teams competed across 4 rounds of escalating difficulty.</p>
+                                            <div className="flex flex-wrap gap-2">
+                                                {['Debugging', 'Competitive Coding', 'Team Event', '6+ Hours'].map(t => (
+                                                    <span key={t} className="text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full" style={{background:'rgba(37,99,235,0.1)', color:'var(--primary)', border:'1px solid rgba(37,99,235,0.2)'}}>{t}</span>
+                                                ))}
+                                            </div>
+                                        </div>
                                     </div>
-                                ))}
+
+                                    {/* MINDZILLA */}
+                                    <div className="event-card group scroll-reveal">
+                                        <div className="relative overflow-hidden h-52">
+                                            <img src="https://picsum.photos/seed/mindzilla2025/800/400" className="w-full h-full object-cover group-hover:scale-105 transition duration-700" />
+                                            <div className="absolute inset-0" style={{background:'linear-gradient(to top, rgba(10,15,30,0.9) 0%, transparent 60%)'}}></div>
+                                            <span className="absolute top-4 left-4 text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full" style={{background:'rgba(124,58,237,0.9)', color:'white'}}>Tech Fest</span>
+                                            <span className="absolute top-4 right-4 text-[10px] font-bold uppercase tracking-widest opacity-70" style={{color:'white'}}>Feb 2025</span>
+                                        </div>
+                                        <div className="p-7">
+                                            <h3 className="text-2xl font-black mb-2 font-display tracking-tight">MINDZILAA</h3>
+                                            <p className="text-sm opacity-60 leading-relaxed mb-5">A multi-event tech extravaganza that tested participants across domains — AI/ML challenges, UI design sprints, quiz battles, and project showcases. Over 300 participants across 8 events made this a landmark edition.</p>
+                                            <div className="flex flex-wrap gap-2">
+                                                {['AI/ML', 'Design Sprint', 'Quiz', '300+ Participants'].map(t => (
+                                                    <span key={t} className="text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full" style={{background:'rgba(124,58,237,0.1)', color:'#7c3aed', border:'1px solid rgba(124,58,237,0.2)'}}>{t}</span>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* CAREER BREW */}
+                                    <div className="event-card group scroll-reveal">
+                                        <div className="relative overflow-hidden h-52">
+                                            <img src="https://picsum.photos/seed/careerbrew2025/800/400" className="w-full h-full object-cover group-hover:scale-105 transition duration-700" />
+                                            <div className="absolute inset-0" style={{background:'linear-gradient(to top, rgba(10,15,30,0.9) 0%, transparent 60%)'}}></div>
+                                            <span className="absolute top-4 left-4 text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full" style={{background:'rgba(5,150,105,0.9)', color:'white'}}>Career</span>
+                                            <span className="absolute top-4 right-4 text-[10px] font-bold uppercase tracking-widest opacity-70" style={{color:'white'}}>Dec 2025</span>
+                                        </div>
+                                        <div className="p-7">
+                                            <h3 className="text-2xl font-black mb-2 font-display tracking-tight">CAREER BREW</h3>
+                                            <p className="text-sm opacity-60 leading-relaxed mb-5">A career development summit bringing together industry professionals, alumni mentors, and placement experts. Featuring mock interviews, résumé reviews, panel discussions, and one-on-one mentorship sessions with leaders from top tech companies.</p>
+                                            <div className="flex flex-wrap gap-2">
+                                                {['Mentorship', 'Mock Interviews', 'Networking', 'Placement Prep'].map(t => (
+                                                    <span key={t} className="text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full" style={{background:'rgba(5,150,105,0.1)', color:'#059669', border:'1px solid rgba(5,150,105,0.2)'}}>{t}</span>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* PLAYTOPIA */}
+                                    <div className="event-card group scroll-reveal">
+                                        <div className="relative overflow-hidden h-52">
+                                            <img src="https://picsum.photos/seed/playtopia2026/800/400" className="w-full h-full object-cover group-hover:scale-105 transition duration-700" />
+                                            <div className="absolute inset-0" style={{background:'linear-gradient(to top, rgba(10,15,30,0.9) 0%, transparent 60%)'}}></div>
+                                            <span className="absolute top-4 left-4 text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full" style={{background:'rgba(234,88,12,0.9)', color:'white'}}>Gaming</span>
+                                            <span className="absolute top-4 right-4 text-[10px] font-bold uppercase tracking-widest opacity-70" style={{color:'white'}}>Feb 2026</span>
+                                        </div>
+                                        <div className="p-7">
+                                            <h3 className="text-2xl font-black mb-2 font-display tracking-tight">PLAYTOPIA</h3>
+                                            <p className="text-sm opacity-60 leading-relaxed mb-5">A massive gaming and game-dev fest combining esports tournaments with a 24-hour game jam. Participants competed in BGMI, Valorant, and Chess brackets while dev teams built original games from scratch — judged on creativity and execution.</p>
+                                            <div className="flex flex-wrap gap-2">
+                                                {['Game Jam', 'Esports', 'BGMI', 'Valorant', '24hr Sprint'].map(t => (
+                                                    <span key={t} className="text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full" style={{background:'rgba(234,88,12,0.1)', color:'#ea580c', border:'1px solid rgba(234,88,12,0.2)'}}>{t}</span>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        {/* ── MEMBER REVIEWS SECTION ── */}
+                        <section id="reviews" className="py-32 px-8 scroll-reveal">
+                            <div className="max-w-6xl mx-auto">
+                                <p className="section-label text-center w-full justify-center mb-3">Member Voices</p>
+                                <h2 className="text-4xl font-extrabold text-center mb-4 tracking-tight">What Our Members Say</h2>
+                                <p className="text-center opacity-50 max-w-xl mx-auto mb-16 text-sm">Real experiences from the people who make Bit-By-Bit what it is.</p>
+
+                                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                    {[
+                                        { quote: "The workshops here are way better than anything online. Real hands-on projects with seniors who genuinely care about teaching you properly.", name: "Zara K.", role: "CSE 2nd Year · ML", avatar: "ZaraK", color: "#3b82f6" },
+                                        { quote: "Bit by Bit helped me land my first startup internship. The network and skills built here made all the difference in every interview.", name: "Varun M.", role: "ECE 4th Year · Alumni", avatar: "VarunM", color: "#7c3aed" },
+                                        { quote: "We represented VIT Bhopal at Smart India Hackathon and reached nationals. Bit by Bit made that possible with the right training and community.", name: "Lakshmi S.", role: "CCE 3rd Year · Cybersec", avatar: "LakshmiS", color: "#059669" },
+                                        { quote: "From zero coding to a Flutter app in production — 6 months with Bit by Bit. The community is incredibly supportive and welcoming to beginners.", name: "Harsh P.", role: "AIML 2nd Year · App Dev", avatar: "HarshP", color: "#ea580c" },
+                                    ].map((r, i) => (
+                                        <div key={i} className="review-card p-7 flex flex-col gap-5 scroll-reveal">
+                                            <div className="flex gap-1 mb-1">
+                                                {[1,2,3,4,5].map(s => (
+                                                    <svg key={s} width="14" height="14" viewBox="0 0 24 24" fill={r.color} style={{opacity:0.9}}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                                ))}
+                                            </div>
+                                            <p className="text-sm leading-relaxed opacity-75 flex-1 italic">"{r.quote}"</p>
+                                            <div className="flex items-center gap-3 pt-2 border-t" style={{borderColor:'rgba(37,99,235,0.1)'}}>
+                                                <div className="w-10 h-10 rounded-full overflow-hidden shrink-0" style={{background:r.color+'22', border:`2px solid ${r.color}44`}}>
+                                                    <img src={`https://api.dicebear.com/7.x/notionists/svg?seed=${r.avatar}`} className="w-full h-full object-contain" />
+                                                </div>
+                                                <div>
+                                                    <p className="font-black text-sm leading-tight">{r.name}</p>
+                                                    <p className="text-[10px] opacity-50 font-bold uppercase tracking-wider mt-0.5">{r.role}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </section>
+
+                        {/* ── JOIN FORM ── */}
+                        <section id="join" className="py-32 px-8 section-alt scroll-reveal">
+                            <div className="max-w-2xl mx-auto">
+                                <p className="section-label text-center w-full justify-center mb-3">Get Involved</p>
+                                <h2 className="text-4xl font-extrabold text-center mb-4 tracking-tight">Join Bit-By-Bit</h2>
+                                <p className="text-center opacity-50 mb-12 text-sm">Whether you're a beginner or a pro — there's a place for you here. Fill in your details and we'll reach out.</p>
+
+                                <JoinForm />
                             </div>
                         </section>
 
@@ -678,67 +1085,69 @@
                             </div>
                         </section>
 
-                        <footer id="connect" className="py-32 px-10 bg-[var(--bg)] relative overflow-hidden">
-                            <canvas id="connect-canvas" className="absolute inset-0 w-full h-full pointer-events-none"></canvas>
+                        <footer id="connect" className="site-footer py-20 px-10 relative overflow-hidden">
+                            <canvas id="connect-canvas" className="absolute inset-0 w-full h-full pointer-events-none opacity-40"></canvas>
+                            <div className="max-w-6xl mx-auto relative z-10">
+                                
+                                {/* Top row */}
+                                <div className="grid md:grid-cols-3 gap-12 pb-16 border-b border-white/10">
+                                    {/* Brand */}
+                                    <div>
+                                        <div className="flex items-center gap-3 mb-5">
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                                <rect x="3" y="13" width="4" height="8" rx="1" fill="#60a5fa" />
+                                                <rect x="10" y="7" width="4" height="14" rx="1" fill="#3b82f6" />
+                                                <rect x="17" y="3" width="4" height="18" rx="1" fill="#1e40af" />
+                                            </svg>
+                                            <span className="font-display text-lg font-black tracking-tighter text-white">BIT-BY-BIT</span>
+                                        </div>
+                                        <p className="text-sm leading-relaxed mb-6" style={{color:'#64748b'}}>The official tech club of VIT Bhopal University. Building high-performance engineers from the ground up — one bit at a time.</p>
+                                        <div className="flex gap-3">
+                                            <a href="https://www.instagram.com/bitbybit_vitb" target="_blank" className="w-10 h-10 rounded-xl flex items-center justify-center transition hover:bg-blue-600" style={{background:'rgba(59,130,246,0.15)', border:'1px solid rgba(59,130,246,0.25)'}}>
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="white"/></svg>
+                                            </a>
+                                            <a href="https://www.linkedin.com/company/bit-by-bit-club/" target="_blank" className="w-10 h-10 rounded-xl flex items-center justify-center transition hover:bg-blue-600" style={{background:'rgba(59,130,246,0.15)', border:'1px solid rgba(59,130,246,0.25)'}}>
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+                                            </a>
+                                        </div>
+                                    </div>
 
-                            <div className="max-w-5xl mx-auto relative z-10">
-                                {/* heading */}
-                                <div className="mb-20 text-center">
-                                    <p className="section-label justify-center mb-3">Reach Out</p>
-                                    <h2 className="font-display text-4xl md:text-6xl font-black tracking-tight uppercase">Let's Connect</h2>
-                                    <p className="mt-4 opacity-40 text-sm tracking-widest uppercase">Find us on the internet</p>
+                                    {/* Quick Links */}
+                                    <div>
+                                        <h4 className="text-white font-black uppercase tracking-widest text-xs mb-6">Quick Links</h4>
+                                        <ul className="space-y-3">
+                                            {[['#home','Home'],['#leads','Leadership'],['#teams','Departments'],['#events','Events'],['#reviews','Member Reviews'],['#join','Join Us']].map(([href,label]) => (
+                                                <li key={href}>
+                                                    <a href={href} className="text-sm transition hover:text-blue-400 flex items-center gap-2" style={{color:'#64748b'}}>
+                                                        <span className="w-1 h-1 rounded-full bg-blue-500 inline-block"></span>{label}
+                                                    </a>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+
+                                    {/* Contact Info */}
+                                    <div>
+                                        <h4 className="text-white font-black uppercase tracking-widest text-xs mb-6">Contact</h4>
+                                        <ul className="space-y-4 text-sm" style={{color:'#64748b'}}>
+                                            <li className="flex items-start gap-3">
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2" className="mt-0.5 shrink-0"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                                                <span>VIT Bhopal University,<br/>Kothrikalan, Sehore,<br/>Madhya Pradesh — 466114</span>
+                                            </li>
+                                            <li className="flex items-center gap-3">
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                                                <span>bitbybit@vitbhopal.ac.in</span>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
 
-                                {/* cards — horizontal strip */}
-                                <div className="flex flex-col md:flex-row gap-5 mb-20">
-                                    {/* Instagram */}
-                                    <a href="https://www.instagram.com/bitbybit_vitb?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank"
-                                        className="group flex-1 relative overflow-hidden rounded-3xl border border-white/10 p-8 flex items-center gap-6 transition-all duration-500 hover:border-blue-500/60 hover:shadow-[0_0_40px_rgba(59,130,246,0.2)]"
-                                        style={{background:'linear-gradient(135deg,rgba(59,130,246,0.07) 0%,rgba(15,23,42,0.4) 100%)'}}>
-                                        {/* icon big faded */}
-                                        <div className="absolute right-6 bottom-4 opacity-5 group-hover:opacity-10 transition-all duration-500 group-hover:scale-110">
-                                            <svg width="90" height="90" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
-                                        </div>
-                                        {/* icon circle */}
-                                        <div className="w-14 h-14 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shrink-0 group-hover:bg-blue-500 group-hover:border-blue-500 transition-all duration-400">
-                                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
-                                        </div>
-                                        <div className="text-left">
-                                            <p className="text-[10px] font-bold uppercase tracking-widest text-blue-500 mb-1">Follow us</p>
-                                            <p className="text-xl font-black tracking-tight">Instagram</p>
-                                            <p className="text-xs opacity-40 mt-1">@bitbybit_vitb</p>
-                                        </div>
-                                        <div className="ml-auto opacity-30 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300">
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                                        </div>
-                                    </a>
-
-                                    {/* LinkedIn */}
-                                    <a href="https://www.linkedin.com/company/bit-by-bit-club/posts/?feedView=all" target="_blank"
-                                        className="group flex-1 relative overflow-hidden rounded-3xl border border-white/10 p-8 flex items-center gap-6 transition-all duration-500 hover:border-blue-500/60 hover:shadow-[0_0_40px_rgba(59,130,246,0.2)]"
-                                        style={{background:'linear-gradient(135deg,rgba(30,64,175,0.07) 0%,rgba(15,23,42,0.4) 100%)'}}>
-                                        <div className="absolute right-6 bottom-4 opacity-5 group-hover:opacity-10 transition-all duration-500 group-hover:scale-110">
-                                            <svg width="90" height="90" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
-                                        </div>
-                                        <div className="w-14 h-14 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shrink-0 group-hover:bg-blue-500 group-hover:border-blue-500 transition-all duration-400">
-                                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
-                                        </div>
-                                        <div className="text-left">
-                                            <p className="text-[10px] font-bold uppercase tracking-widest text-blue-500 mb-1">Join us</p>
-                                            <p className="text-xl font-black tracking-tight">LinkedIn</p>
-                                            <p className="text-xs opacity-40 mt-1">Bit-By-Bit Club</p>
-                                        </div>
-                                        <div className="ml-auto opacity-30 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300">
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                                        </div>
-                                    </a>
-                                </div>
-
-                                {/* footer line */}
-                                <div className="flex items-center gap-4 opacity-20">
-                                    <div className="flex-1 h-px bg-current"></div>
-                                    <span className="font-bold uppercase tracking-[0.5em] text-[10px]">© Bit-By-Bit Club • VIT Bhopal</span>
-                                    <div className="flex-1 h-px bg-current"></div>
+                                {/* Bottom bar */}
+                                <div className="flex flex-col md:flex-row justify-between items-center gap-4 pt-8 text-xs" style={{color:'#475569'}}>
+                                    <span>© 2024–2026 Bit-By-Bit Club · VIT Bhopal University. All rights reserved.</span>
+                                    <div className="flex gap-6">
+                                        <span className="font-bold uppercase tracking-widest">Made with ♥ by the Tech Team</span>
+                                    </div>
                                 </div>
                             </div>
                         </footer>
@@ -747,28 +1156,119 @@
             );
         };
 
-        const LeadCard = ({ name, role, seed }) => (
-            <div className="corner-card glass p-10 rounded-[3.5rem] flex flex-col items-center group transition-all duration-700 hover:-translate-y-4 shadow-xl hover:bg-blue-600 hover:text-white border-white/10">
-                {/* Wrapper for Image and Hover Note */}
-                <div className="relative">
-                    <div className="w-44 h-44 mb-8 bg-white/5 rounded-full overflow-hidden p-2 group-hover:scale-105 transition-all border-4 border-blue-500/20 group-hover:border-white">
-                        <img src={`https://api.dicebear.com/7.x/notionists/svg?seed=${seed}&flip=true`} className="w-full h-full object-contain" />
-                    </div>
-                    
-                    {/* The Note Box */}
-                    <div className="absolute -top-4 -right-12 w-48 p-4 glass rounded-2xl shadow-2xl opacity-0 scale-50 translate-y-4 pointer-events-none transition-all duration-500 group-hover:opacity-100 group-hover:scale-100 group-hover:translate-y-0 z-20 border-blue-500/30">
-                        <div className="text-[11px] italic leading-tight text-center text-blue-500 group-hover:text-white font-medium">
-                            "A short message or quote from the leader goes right here."
-                        </div>
-                        {/* Small triangle at the bottom of the box */}
-                        <div className="absolute bottom-[-6px] left-1/4 -translate-x-1/2 w-3 h-3 glass rotate-45 border-r border-b border-blue-500/30 group-hover:bg-blue-600"></div>
-                    </div>
-                </div>
+        const LeadCard = ({ name, role, seed, quote }) => {
+            const cardRef = React.useRef(null);
 
-                <h3 className="text-3xl font-black mb-1 leading-tight">{name}</h3>
-                <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-blue-500 group-hover:text-white">{role}</p>
-            </div>
-        );
+            const handleMouseMove = (e) => {
+                const card = cardRef.current;
+                if (!card) return;
+                const rect = card.getBoundingClientRect();
+                const cx = rect.left + rect.width / 2;
+                const cy = rect.top + rect.height / 2;
+                const dx = (e.clientX - cx) / (rect.width / 2);
+                const dy = (e.clientY - cy) / (rect.height / 2);
+                card.style.transform = `perspective(900px) rotateY(${dx * 10}deg) rotateX(${-dy * 10}deg) translateY(-8px)`;
+            };
+            const handleMouseLeave = () => {
+                if (cardRef.current) cardRef.current.style.transform = 'perspective(900px) rotateY(0) rotateX(0) translateY(0)';
+            };
+
+            return (
+                <div ref={cardRef} className="corner-card glass lead-tilt p-10 rounded-[3.5rem] flex flex-col items-center group border-white/10 cursor-none"
+                    onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave}
+                    style={{transition:'transform 0.12s ease, box-shadow 0.3s'}}>
+                    <div className="relative">
+                        <div className="w-44 h-44 mb-8 bg-white/5 rounded-full overflow-hidden p-2 group-hover:scale-105 transition-all border-4 border-blue-500/20 group-hover:border-blue-500">
+                            <img src={`https://api.dicebear.com/7.x/notionists/svg?seed=${seed}&flip=true`} className="w-full h-full object-contain" />
+                        </div>
+                        {/* Quote bubble */}
+                        <div className="absolute -top-4 -right-14 w-52 p-4 glass rounded-2xl shadow-2xl opacity-0 scale-75 translate-y-2 pointer-events-none transition-all duration-400 group-hover:opacity-100 group-hover:scale-100 group-hover:translate-y-0 z-20 border border-blue-500/20">
+                            <p className="text-[11px] italic leading-snug text-center font-medium" style={{color:'var(--primary)'}}>{quote}</p>
+                            <div className="absolute bottom-[-6px] left-1/3 w-3 h-3 rotate-45 border-r border-b border-blue-500/20" style={{background:'var(--card-bg)'}}></div>
+                        </div>
+                    </div>
+                    <h3 className="text-3xl font-black mb-1 leading-tight">{name}</h3>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-blue-500">{role}</p>
+                </div>
+            );
+        };
+
+        const JoinForm = () => {
+            const [form, setForm] = React.useState({ name:'', email:'', year:'', branch:'', interest:'', message:'' });
+            const [submitted, setSubmitted] = React.useState(false);
+            const [loading, setLoading] = React.useState(false);
+
+            const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
+
+            const handleSubmit = () => {
+                if (!form.name || !form.email || !form.year || !form.branch) return;
+                setLoading(true);
+                setTimeout(() => { setLoading(false); setSubmitted(true); }, 1200);
+            };
+
+            if (submitted) return (
+                <div className="text-center py-20">
+                    <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6" style={{background:'rgba(37,99,235,0.15)', border:'2px solid rgba(37,99,235,0.4)'}}>
+                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    </div>
+                    <h3 className="text-2xl font-black mb-2">You're in the queue!</h3>
+                    <p className="opacity-50 text-sm">We'll reach out to <strong>{form.email}</strong> soon. Welcome to Bit-By-Bit!</p>
+                </div>
+            );
+
+            return (
+                <div className="glass rounded-[2rem] p-8 md:p-10 space-y-5 shadow-xl">
+                    <div className="grid md:grid-cols-2 gap-5">
+                        <div>
+                            <label className="block text-xs font-black uppercase tracking-widest mb-2 opacity-60">Full Name *</label>
+                            <input name="name" value={form.name} onChange={handleChange} placeholder="e.g. Rahul Sharma" className="form-input" />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-black uppercase tracking-widest mb-2 opacity-60">Email *</label>
+                            <input name="email" type="email" value={form.email} onChange={handleChange} placeholder="your@email.com" className="form-input" />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-black uppercase tracking-widest mb-2 opacity-60">Year *</label>
+                            <select name="year" value={form.year} onChange={handleChange} className="form-input">
+                                <option value="">Select Year</option>
+                                <option>1st Year</option>
+                                <option>2nd Year</option>
+                                <option>3rd Year</option>
+                                <option>4th Year</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label className="block text-xs font-black uppercase tracking-widest mb-2 opacity-60">Branch *</label>
+                            <input name="branch" value={form.branch} onChange={handleChange} placeholder="e.g. CSE, ECE, AIML" className="form-input" />
+                        </div>
+                    </div>
+                    <div>
+                        <label className="block text-xs font-black uppercase tracking-widest mb-2 opacity-60">Area of Interest</label>
+                        <select name="interest" value={form.interest} onChange={handleChange} className="form-input">
+                            <option value="">Pick a domain</option>
+                            <option>Web Development</option>
+                            <option>App Development</option>
+                            <option>AI / Machine Learning</option>
+                            <option>Cybersecurity</option>
+                            <option>UI/UX Design</option>
+                            <option>Content & Social Media</option>
+                            <option>Event Management</option>
+                            <option>Open to All</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label className="block text-xs font-black uppercase tracking-widest mb-2 opacity-60">Why do you want to join?</label>
+                        <textarea name="message" value={form.message} onChange={handleChange} rows={3} placeholder="Tell us a bit about yourself and what excites you about Bit-By-Bit..." className="form-input resize-none" />
+                    </div>
+                    <button onClick={handleSubmit} disabled={loading}
+                        className="w-full btn-grad py-4 rounded-2xl font-black uppercase tracking-widest text-sm text-white transition-all hover:scale-[1.02] hover:shadow-xl disabled:opacity-60 disabled:cursor-not-allowed"
+                        style={{boxShadow:'0 8px 30px rgba(37,99,235,0.35)'}}>
+                        {loading ? 'Submitting...' : 'Submit Application →'}
+                    </button>
+                    <p className="text-center text-xs opacity-40">No spam, ever. We'll only reach out about club activities.</p>
+                </div>
+            );
+        };
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
@@ -781,7 +1281,7 @@
         let W, H, nodes, mouse = { x: -9999, y: -9999 };
         window._bgMouse = mouse;
 
-        const isDark = () => document.documentElement.getAttribute('data-theme') !== 'light';
+        const isDark = () => document.documentElement.getAttribute('data-theme') === 'dark';
 
         function resize() {
             W = canvas.width  = window.innerWidth;
@@ -871,7 +1371,7 @@
             const ctx = canvas.getContext('2d');
             let W, H, nodes;
 
-            const isDark = () => document.documentElement.getAttribute('data-theme') !== 'light';
+            const isDark = () => document.documentElement.getAttribute('data-theme') === 'dark';
 
             function resize() {
                 const rect = canvas.parentElement.getBoundingClientRect();
@@ -941,7 +1441,71 @@
         setTimeout(initConnect, 1000);
     </script>
     <script>
-    // ── TOUCH INTERACTIONS FOR MOBILE ─────────────────────────────────
+    // ── SCROLL REVEAL OBSERVER ─────────────────────────────────────
+    (function() {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.12 });
+
+        const init = () => {
+            document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
+        };
+        setTimeout(init, 800);
+        window.addEventListener('load', init);
+    })();
+
+    // ── ANIMATED STAT COUNTERS ────────────────────────────────────
+    (function() {
+        const parseNum = str => parseFloat(str.replace(/[^0-9.]/g, ''));
+        const getSuffix = str => str.replace(/[\d.]/g, '');
+
+        const animateCounter = (el) => {
+            const original = el.textContent.trim();
+            const target = parseNum(original);
+            const suf = getSuffix(original);
+            if (!target) return;
+            const dur = 1800;
+            const start = performance.now();
+            const tick = (now) => {
+                const t = Math.min((now - start) / dur, 1);
+                const ease = 1 - Math.pow(1 - t, 3);
+                el.textContent = Math.round(ease * target) + suf;
+                if (t < 1) requestAnimationFrame(tick);
+            };
+            requestAnimationFrame(tick);
+        };
+
+        const cObs = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.querySelectorAll('.stat-number').forEach(animateCounter);
+                    cObs.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        setTimeout(() => {
+            document.querySelectorAll('.stat-number').forEach(el => {
+                const parent = el.closest('.section-alt') || el.parentElement;
+                if (parent) cObs.observe(parent);
+            });
+        }, 900);
+    })();
+
+    // ── STICKY FLOAT CTA ─────────────────────────────────────────
+    (function() {
+        const btn = document.getElementById('float-cta');
+        if (!btn) return;
+        window.addEventListener('scroll', () => {
+            btn.classList.toggle('visible', window.scrollY > 500);
+        }, { passive: true });
+    })();
+
+    
     (function() {
         const isTouchDevice = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
         if (!isTouchDevice) return;
